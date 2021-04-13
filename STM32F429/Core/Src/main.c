@@ -1,16 +1,11 @@
 #include "main.h"
-
+#include "led.h"
+#include "uart.h"
+#include "stdio.h"
 void SystemClock_Config(void);                // ±÷”≈‰÷√∫Ø ˝ 180M
 static void MX_GPIO_Init(void);
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -26,12 +21,8 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
+  printf("hellon STM32F429\r\n");
 
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
@@ -98,8 +89,9 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
 
-  /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
+    led_init();
+    uart1_init();
 
 }
 
