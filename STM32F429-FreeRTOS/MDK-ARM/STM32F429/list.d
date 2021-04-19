@@ -7,6 +7,6 @@ stm32f429\list.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 stm32f429\list.o: ..\FreeRTOS\include\projdefs.h
 stm32f429\list.o: ..\FreeRTOS\include\portable.h
 stm32f429\list.o: ..\FreeRTOS\include\deprecated_definitions.h
-stm32f429\list.o: ..\FreeRTOS\portable\RVDS\ARM_CM4_MPU\portmacro.h
+stm32f429\list.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\list.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\list.o: ..\FreeRTOS\include\list.h

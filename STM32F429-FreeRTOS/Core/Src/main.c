@@ -2,8 +2,13 @@
 #include "led.h"
 #include "uart.h"
 #include "stdio.h"
+#include "FreeRTOS.h"
 void SystemClock_Config(void);                // ±÷”≈‰÷√∫Ø ˝ 180M
 static void MX_GPIO_Init(void);
+
+//xTaskHandle
+
+
 int main(void)
 {
   HAL_Init();

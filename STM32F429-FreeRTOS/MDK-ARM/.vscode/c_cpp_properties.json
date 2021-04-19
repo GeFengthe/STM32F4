@@ -3,17 +3,21 @@
         {
             "name": "STM32F429",
             "includePath": [
-                "e:\\STM32-Project\\STM32F429\\Core\\Inc",
-                "e:\\STM32-Project\\STM32F429\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
-                "e:\\STM32-Project\\STM32F429\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
-                "e:\\STM32-Project\\STM32F429\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
-                "e:\\STM32-Project\\STM32F429\\Drivers\\CMSIS\\Include",
-                "e:\\STM32-Project\\STM32F429\\BSP\\Inc",
-                "e:\\STM32-Project\\STM32F429\\APP\\Inc",
-                "e:\\STM32-Project\\STM32F429\\MDK-ARM",
-                "e:\\STM32-Project\\STM32F429\\Core\\Src",
-                "e:\\STM32-Project\\STM32F429\\Drivers\\STM32F4xx_HAL_Driver\\Src",
-                "e:\\STM32-Project\\STM32F429\\BSP\\src"
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Core\\Inc",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Drivers\\STM32F4xx_HAL_Driver\\Inc",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Drivers\\STM32F4xx_HAL_Driver\\Inc\\Legacy",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Drivers\\CMSIS\\Device\\ST\\STM32F4xx\\Include",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Drivers\\CMSIS\\Include",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\BSP\\Inc",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\APP\\Inc",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\FreeRTOS\\include",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\FreeRTOS\\portable\\RVDS\\ARM_CM4F",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\MDK-ARM",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Core\\Src",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\Drivers\\STM32F4xx_HAL_Driver\\Src",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\BSP\\src",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\FreeRTOS",
+                "c:\\Users\\sky\\Desktop\\STM32F4-HAL\\STM32F4\\STM32F429-FreeRTOS\\FreeRTOS\\portable\\MemMang"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

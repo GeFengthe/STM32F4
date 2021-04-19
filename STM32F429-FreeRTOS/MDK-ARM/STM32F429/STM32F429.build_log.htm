@@ -22,33 +22,21 @@ Dialog DLL:      TCM.DLL V1.35.1.0
  
 <h2>Project:</h2>
 C:\Users\sky\Desktop\STM32F4-HAL\STM32F4\STM32F429-FreeRTOS\MDK-ARM\STM32F429.uvprojx
-Project File Date:  04/14/2021
+Project File Date:  04/18/2021
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'E:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F429'
-compiling list.c...
-compiling croutine.c...
-compiling event_groups.c...
-compiling heap_4.c...
-compiling timers.c...
-compiling queue.c...
-compiling port.c...
-compiling tasks.c...
+compiling lcd.c...
+..\BSP\Inc\lcd.h(9): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\BSP\src\lcd.c(6): warning:  #1-D: last line of file ends without a newline
+  }
+..\BSP\src\lcd.c: 2 warnings, 0 errors
 linking...
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol vApplicationGetIdleTaskMemory (referred from tasks.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol vApplicationGetTimerTaskMemory (referred from timers.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __FLASH_segment_end__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __FLASH_segment_start__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __SRAM_segment_end__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __SRAM_segment_start__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __privileged_data_end__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __privileged_data_start__ (referred from port.o).
-STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol __privileged_functions_end__ (referred from port.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 9 error messages.
-"STM32F429\STM32F429.axf" - 9 Error(s), 0 Warning(s).
+Program Size: Code=4204 RO-data=484 RW-data=80 ZI-data=1328  
+FromELF: creating hex file...
+"STM32F429\STM32F429.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -71,8 +59,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
-Target not created.
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>
