@@ -25,6 +25,7 @@ stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_eth.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
@@ -51,3 +52,6 @@ stm32f429\main.o: ..\FreeRTOS\include\portable.h
 stm32f429\main.o: ..\FreeRTOS\include\deprecated_definitions.h
 stm32f429\main.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\main.o: ..\FreeRTOS\include\mpu_wrappers.h
+stm32f429\main.o: ..\FreeRTOS\include\task.h
+stm32f429\main.o: ..\FreeRTOS\include\list.h
+stm32f429\main.o: ..\BSP\Inc\delay.h

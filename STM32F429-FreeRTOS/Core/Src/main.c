@@ -3,40 +3,98 @@
 #include "uart.h"
 #include "stdio.h"
 #include "FreeRTOS.h"
+#include "task.h"
+#include "delay.h"
 void SystemClock_Config(void);                // ±÷”≈‰÷√∫Ø ˝ 180M
 static void MX_GPIO_Init(void);
+
+#define START_TASK_PRIO             1
+#define APP_TASK_PPRIO              3
+#define MESS_TASK_PRIO              4
+
+
+#define START_TASK_SIZE             128
+#define APP_TASK_SIZE               128*4
+#define MESS_TASK_SIZE              128*4
+
+TaskHandle_t    StartTask_Handler;
+TaskHandle_t    AppTask_Handler;
+TaskHandle_t    MessTask_Handler;
+
+static void StartTask(void *parameters);
+static void AppTask(void *parameters);
 
 //xTaskHandle
 
 
 int main(void)
 {
-  HAL_Init();
+    HAL_Init();
 
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    xTaskCreate((TaskFunction_t )StartTask,
+                (const char *) "starttask",
+                (uint16_t      )START_TASK_SIZE,
+                (void *)        NULL,
+                (UBaseType_t   )START_TASK_PRIO,
+                (TaskHandle_t *)&StartTask_Handler);
+                
+     vTaskStartScheduler();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  printf("hellon STM32F429\r\n");
-
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
+    while (1)
+    {
+        
+        
+        
+    }
   /* USER CODE END 3 */
 }
 
+void StartTask(void *parameters)
+{
+    led_init();
+    uart1_init();
+    xTaskCreate((TaskFunction_t )AppTask,
+                (const char *   )"apptask",
+                (uint16_t       )APP_TASK_SIZE,
+                (void *)         NULL,
+                (UBaseType_t    )APP_TASK_PPRIO,
+                (TaskHandle_t * )&AppTask_Handler);
+                
+    vTaskDelete(StartTask_Handler);
+    vTaskStartScheduler();
+}
+
+void AppTask(void *parameters)
+{
+    static uint8_t ledtog =0;
+    while(1)
+    {
+        printf("time----------\r\n");
+        if(ledtog ==0)
+        {
+            LEDR(0);
+            ledtog =1;
+        }else
+        {
+            LEDR(1);
+            ledtog =0;
+        }
+        vTaskDelay(1000);
+    }
+    
+}
+
+void MessTask(void *parameters)
+{
+    
+}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -95,8 +153,6 @@ static void MX_GPIO_Init(void)
 {
 
   __HAL_RCC_GPIOH_CLK_ENABLE();
-    led_init();
-    uart1_init();
 
 }
 
@@ -118,22 +174,3 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

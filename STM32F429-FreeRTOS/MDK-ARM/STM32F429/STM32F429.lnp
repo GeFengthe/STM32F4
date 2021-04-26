@@ -30,6 +30,7 @@
 "stm32f429\stm32f4xx_hal_usart.o"
 "stm32f429\stm32f4xx_hal_sram.o"
 "stm32f429\stm32f4xx_ll_fmc.o"
+"stm32f429\stm32f4xx_hal_eth.o"
 "stm32f429\system_stm32f4xx.o"
 "stm32f429\delay.o"
 "stm32f429\uart.o"

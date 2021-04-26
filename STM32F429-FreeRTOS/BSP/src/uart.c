@@ -15,6 +15,7 @@ void uart1_init(void)
     
     HAL_UART_Init(&UART1_Handler);
     __HAL_UART_ENABLE_IT(&UART1_Handler,USART_IT_RXNE);
+//    __HAL_UART_ENABLE(&UART1_Handler);
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
