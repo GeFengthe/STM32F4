@@ -1,45 +1,45 @@
 #include "main.h"
-
+#include "led.h"
+#include "uart.h"
+#include "stdio.h"
+#include "delay.h"
+#include "key.h"
 void SystemClock_Config(void);                // ±÷”≈‰÷√∫Ø ˝ 180M
 static void MX_GPIO_Init(void);
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    key_init();
+    Tim3_init(10000,89);
+    sky_keymode =KEY_INIT_MODE;
+    printf("hellon STM32F429-------------\r\n");
 
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
+    while (1)
+    {
+        switch(sky_keymode)
+        {
+            case KEY_UP_DOWN:
+                printf("KEY_UP_DOWN\r\n");
+                sky_keymode =KEY_INIT_MODE;
+                break;
+            case KEY0_DOWN:
+                printf("KEY0_DOWN\r\n");
+                sky_keymode =KEY_INIT_MODE;
+                break;
+            case KEY1_DOWN:
+                printf("KEY1_DOWN\r\n");
+                sky_keymode =KEY_INIT_MODE;
+                break;
+            case KEY2_DOWN:
+                printf("KEY2_DOWN\r\n");
+                sky_keymode =KEY_INIT_MODE;
+                break;
+        }
+    }
   /* USER CODE END 3 */
-}
+    }
 
 /**
   * @brief System Clock Configuration
@@ -98,8 +98,9 @@ void SystemClock_Config(void)
 static void MX_GPIO_Init(void)
 {
 
-  /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
+    led_init();
+    uart1_init();
 
 }
 

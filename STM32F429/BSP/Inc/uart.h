@@ -4,8 +4,7 @@
 
 
 
-
-
+extern void uart1_init(void);
 
 #endif
 
