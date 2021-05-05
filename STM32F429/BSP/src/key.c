@@ -11,6 +11,7 @@ void key_init(void)
     
     GPIO_InitStruct.Pin =KEY_UP_PIN;
     GPIO_InitStruct.Mode =GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull =GPIO_NOPULL;
     HAL_GPIO_Init(KEY_UP_PORT,&GPIO_InitStruct);
     
     GPIO_InitStruct.Pin =KEY0_PIN;

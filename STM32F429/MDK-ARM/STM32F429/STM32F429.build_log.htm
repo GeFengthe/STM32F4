@@ -21,20 +21,24 @@ Target DLL:      CMSIS_AGDI.dll V1.29.10.0
 Dialog DLL:      TCM.DLL V1.35.1.0
  
 <h2>Project:</h2>
-C:\Users\sky\Desktop\STM32F4-HAL\STM32F4\STM32F429\MDK-ARM\STM32F429.uvprojx
-Project File Date:  04/22/2021
+C:\Users\sky\Desktop\STM32F4-HAL\STM32F4-Head\STM32F4\STM32F429\MDK-ARM\STM32F429.uvprojx
+Project File Date:  05/05/2021
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'E:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F429'
-compiling key.c...
-..\BSP\Inc\key.h(29): warning:  #1-D: last line of file ends without a newline
+compiling lwip_comm.c...
+..\LWIP\lwip-1.4.1\src\include\netif\ethernetif.h(29): warning:  #1-D: last line of file ends without a newline
   #endif
-..\BSP\src\key.c: 1 warning, 0 errors
+..\LWIP\lwip_app\lwip_comm.c: 1 warning, 0 errors
 linking...
-Program Size: Code=4436 RO-data=484 RW-data=32 ZI-data=1152  
-FromELF: creating hex file...
-"STM32F429\STM32F429.axf" - 0 Error(s), 1 Warning(s).
+STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol lwip_pkt_hanle (referred from lan8720.o).
+STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol LWIP_PLATFORM_ASSERT (referred from etharp.o).
+STM32F429\STM32F429.axf: Error: L6218E: Undefined symbol LAN8720_Init (referred from lwip_comm.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 3 error messages.
+"STM32F429\STM32F429.axf" - 3 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -57,6 +61,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.4.0
+Target not created.
 Build Time Elapsed:  00:00:03
 </pre>
 </body>

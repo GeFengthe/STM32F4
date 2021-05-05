@@ -25,6 +25,7 @@ stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_eth.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
@@ -44,3 +45,4 @@ stm32f429\main.o: ..\BSP\Inc\uart.h
 stm32f429\main.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f429\main.o: ..\BSP\Inc\delay.h
 stm32f429\main.o: ..\BSP\Inc\key.h
+stm32f429\main.o: ..\APP\Inc\malloc.h

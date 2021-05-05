@@ -4,18 +4,23 @@
 #include "stdio.h"
 #include "delay.h"
 #include "key.h"
+#include "malloc.h"
 void SystemClock_Config(void);                // ±÷”≈‰÷√∫Ø ˝ 180M
 static void MX_GPIO_Init(void);
+uint8_t * p=NULL;
 int main(void)
 {
+    uint8_t a=1;
+    uint8_t b =3;
     HAL_Init();
     SystemClock_Config();
     MX_GPIO_Init();
     key_init();
     Tim3_init(10000,89);
     sky_keymode =KEY_INIT_MODE;
-    printf("hellon STM32F429-------------\r\n");
-
+//    p=mymalloc(500);
+//    printf("p=0x%x\r\n",p);
+//    myfree(p);
     while (1)
     {
         switch(sky_keymode)

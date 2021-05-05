@@ -1,8 +1,43 @@
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'E:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'STM32F429'
-compiling uart.c...
-linking...
-Program Size: Code=2308 RO-data=476 RW-data=16 ZI-data=1024  
-FromELF: creating hex file...
-"STM32F429\STM32F429.axf" - 0 Error(s), 0 Warning(s).
-Build Time Elapsed:  00:00:02
+compiling lan8720.c...
+..\BSP\Inc\lan8720.h(6): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\BSP\src\lan8720.c(98): warning:  #223-D: function "ETH_GetRxPktSize" declared implicitly
+      while(ETH_GetRxPktSize(ETH_Handler.RxDesc))
+..\BSP\src\lan8720.c(100): warning:  #223-D: function "lwip_pkt_hanle" declared implicitly
+          lwip_pkt_hanle();                                                           //处理以太网数据，即将数据提交给LWIP
+..\BSP\src\lan8720.c(112): error:  #159: declaration is incompatible with previous "ETH_GetRxPktSize"  (declared at line 98)
+  uint32_t ETH_GetRxPktSize(ETH_DMADescTypeDef *DMARxDscr)
+..\BSP\src\lan8720.c: 3 warnings, 1 error
+compiling key.c...
+..\BSP\Inc\key.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\BSP\src\key.c: 1 warning, 0 errors
+compiling main.c...
+..\BSP\Inc\led.h(12): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\BSP\Inc\delay.h(7): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\BSP\Inc\key.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\APP\Inc\malloc.h(41): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Src/main.c(13): warning:  #177-D: variable "a"  was declared but never referenced
+      uint8_t a=1;
+../Core/Src/main.c(14): warning:  #177-D: variable "b"  was declared but never referenced
+      uint8_t b =3;
+../Core/Src/main.c: 6 warnings, 0 errors
+compiling malloc.c...
+..\APP\Inc\malloc.h(41): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\APP\src\malloc.c(4): error:  #254: type name is not allowed
+  __align(uint32_t) uint8_t mem1base[MEM1_MAX_SIZE] __attribute__ ((at(0x20000000)));                                                  //内部SRAM内存池
+..\APP\src\malloc.c(4): error:  #1038: invalid alignment specified; only integer powers of 2 allowed
+  __align(uint32_t) uint8_t mem1base[MEM1_MAX_SIZE] __attribute__ ((at(0x20000000)));                                                  //内部SRAM内存池
+..\APP\src\malloc.c(154): warning:  #1-D: last line of file ends without a newline
+  }
+..\APP\src\malloc.c: 2 warnings, 2 errors
+"STM32F429\STM32F429.axf" - 3 Error(s), 12 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:09
