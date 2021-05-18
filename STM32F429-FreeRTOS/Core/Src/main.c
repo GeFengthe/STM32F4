@@ -5,12 +5,19 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "delay.h"
+#include "lan8720.h"
+#include "pcf8574.h"
+#include "lwip/netif.h"
+#include "lwip_comm.h"
+#include "lwip_comm.h"
 void SystemClock_Config(void);                //时钟配置函数 180M
 static void MX_GPIO_Init(void);
 
-#define START_TASK_PRIO             1
-#define APP_TASK_PPRIO              3
-#define MESS_TASK_PRIO              4
+#define VERSION                     ("1.0.1")
+
+#define START_TASK_PRIO             1                   //开始任务优先级
+#define APP_TASK_PPRIO              7
+#define MESS_TASK_PRIO              5
 
 
 #define START_TASK_SIZE             128
@@ -38,6 +45,11 @@ int main(void)
   /* Configure the system clock */
     SystemClock_Config();
     MX_GPIO_Init();
+    key_init();
+    led_init();
+    uart1_init();
+    PCF8574_Init();
+    printf("STM32F4-FreeRTOS Version :v%s\r\n",VERSION);
     xTaskCreate((TaskFunction_t )StartTask,
                 (const char *) "starttask",
                 (uint16_t      )START_TASK_SIZE,
@@ -58,8 +70,15 @@ int main(void)
 
 void StartTask(void *parameters)
 {
-    led_init();
-    uart1_init();
+    
+
+    while(lwip_comm_init())
+    {
+        printf("LWIP init fail\r\n");
+    }
+    printf("LWIP init Success\r\n");
+    lwip_comm_dhcp_creat();
+
     xTaskCreate((TaskFunction_t )AppTask,
                 (const char *   )"apptask",
                 (uint16_t       )APP_TASK_SIZE,
@@ -73,20 +92,51 @@ void StartTask(void *parameters)
 
 void AppTask(void *parameters)
 {
-    static uint8_t ledtog =0;
+
+    vTaskDelete(AppTask_Handler);
     while(1)
     {
-        printf("time----------\r\n");
-        if(ledtog ==0)
+        vTaskDelay(1);
+    }
+    uint8_t *buffer;
+    uint8_t times,i,key=0;
+    uint32_t freemem;
+    while(1)
+    {
+        key =Sky_KeyScan(0);
+        switch(key)
         {
-            LEDR(0);
-            ledtog =1;
-        }else
-        {
-            LEDR(1);
-            ledtog =0;
+            case WKUP_PRES:
+                buffer =pvPortMalloc(30);
+                printf("申请到的内存地址为:%#x\r\n",(int)(buffer));
+                break;
+            case KEY0_PRES:
+                if(buffer!=NULL)
+                {
+                    vPortFree(buffer);
+                    printf("内存释放\r\n");
+                }
+                buffer =NULL;
+                break;
+            case KEY1_PRES:
+                if(buffer!=NULL)
+                {
+                    times++;
+                    sprintf((char*)buffer,"User %d Times",times);
+                    printf("写入内存\r\n");
+                    
+                }
+                break;
+            
         }
-        vTaskDelay(1000);
+        freemem =xPortGetFreeHeapSize();
+        i++;
+        if(i==50)
+        {
+            printf("freemem =%d\r\n",freemem);
+            i=0;
+        }
+        vTaskDelay(10);
     }
     
 }

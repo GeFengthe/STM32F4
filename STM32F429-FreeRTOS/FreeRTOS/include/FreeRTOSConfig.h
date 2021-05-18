@@ -129,9 +129,10 @@
 /***************************************************************************************************************/
 /*                                FreeRTOS与内存申请有关配置选项                                                */
 /***************************************************************************************************************/
+#define configAPPLICATION_ALLOCATED_HEAP        0                                   //使用自定义SRAM的内存
 #define configSUPPORT_DYNAMUC_ALLOCATION        1                                   //支持动态内存申请
 #define configSUPPORT_STATIC_ALLOCATION         0                                   //是否支持静态内存申请
-#define configTOTAL_HEAP_SIZE			        ( ( size_t ) ( 75 * 1024 ) )        //系统所有总的堆大小
+#define configTOTAL_HEAP_SIZE			        ( ( size_t ) ( 55* 1024 ) )        //系统所有总的堆大小 75K      实际使用的总是比设置的小5K 未找到原因
 
 
 /***************************************************************************************************************/
@@ -158,7 +159,7 @@
 /*                                FreeRTOS与软件定时器有关的配置选项                                            */
 /***************************************************************************************************************/
 #define configUSE_TIMERS				        1                                   //为1时启用软件定时器
-#define configTIMER_TASK_PRIORITY		        ( 31 )                              //软件定时器优先级
+#define configTIMER_TASK_PRIORITY		        ( 30 )                              //软件定时器优先级
 #define configTIMER_QUEUE_LENGTH		        10                                  //软件定时器队列长度
 #define configTIMER_TASK_STACK_DEPTH	        ( configMINIMAL_STACK_SIZE * 2 )    //软件定时器任务堆栈大小
 
@@ -227,7 +228,7 @@ standard names. */
 /***************************************************************************************************************/
 #define vPortSVCHandler SVC_Handler
 #define xPortPendSVHandler PendSV_Handler
-#define xPortSysTickHandler SysTick_Handler
+//#define xPortSysTickHandler SysTick_Handler
 
 #endif /* FREERTOS_CONFIG_H */
 

@@ -338,6 +338,7 @@ HAL_StatusTypeDef HAL_ETH_Init(ETH_HandleTypeDef *heth)
   }
   
   /* Delay to assure PHY reset */
+//  delay_ms(PHY_RESET_DELAY);
   HAL_Delay(PHY_RESET_DELAY);
   
   if((heth->Init).AutoNegotiation != ETH_AUTONEGOTIATION_DISABLE)

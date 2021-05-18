@@ -43,4 +43,16 @@ stm32f429\uart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 stm32f429\uart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 stm32f429\uart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_usart.h
 stm32f429\uart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h
+stm32f429\uart.o: ..\BSP\Inc\delay.h
+stm32f429\uart.o: ../Core/Inc/main.h
+stm32f429\uart.o: ..\BSP\Inc\key.h
+stm32f429\uart.o: ..\FreeRTOS\include\FreeRTOS.h
+stm32f429\uart.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 stm32f429\uart.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f429\uart.o: ..\FreeRTOS\include\projdefs.h
+stm32f429\uart.o: ..\FreeRTOS\include\portable.h
+stm32f429\uart.o: ..\FreeRTOS\include\deprecated_definitions.h
+stm32f429\uart.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
+stm32f429\uart.o: ..\FreeRTOS\include\mpu_wrappers.h
+stm32f429\uart.o: ..\FreeRTOS\include\task.h
+stm32f429\uart.o: ..\FreeRTOS\include\list.h
