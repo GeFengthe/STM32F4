@@ -44,6 +44,5 @@ stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\lwip/netifapi.h
 stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/ip_frag.h
 stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\netif/etharp.h
 stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\lwip/dhcp.h
-stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\lwip/udp.h
 stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/autoip.h
 stm32f429\timers_1.o: ..\LWIP\lwip-1.4.1\src\include\lwip/dns.h

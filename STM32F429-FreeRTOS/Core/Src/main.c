@@ -2,149 +2,161 @@
 #include "led.h"
 #include "uart.h"
 #include "stdio.h"
-#include "FreeRTOS.h"
-#include "task.h"
 #include "delay.h"
 #include "lan8720.h"
 #include "pcf8574.h"
 #include "lwip/netif.h"
 #include "lwip_comm.h"
-#include "lwip_comm.h"
+#include "udp_demo.h"
+#include "lwip_tcp_demo.h"
+#include "queue.h"
+#include "Semphr.h"
+#include "timers.h"
 void SystemClock_Config(void);                //时钟配置函数 180M
 static void MX_GPIO_Init(void);
 
-#define VERSION                     ("1.0.1")
+#define VERSION                     ("1.0.2")
 
-#define START_TASK_PRIO             1                   //开始任务优先级
-#define APP_TASK_PPRIO              7
-#define MESS_TASK_PRIO              5
+#define SKY_STARTTASK_PRIO             2                   //开始任务优先级
+#define SKY_APPTASK_PPRIO              7
 
 
-#define START_TASK_SIZE             128
-#define APP_TASK_SIZE               128*4
-#define MESS_TASK_SIZE              128*4
+#define SKY_STARTTASK_SIZE             128
+#define SKY_APPTASK_SIZE               128*4
 
-TaskHandle_t    StartTask_Handler;
-TaskHandle_t    AppTask_Handler;
-TaskHandle_t    MessTask_Handler;
+#define SKY_MQTTTIMERHEART_PERIOD      1000*56              //56s
 
-static void StartTask(void *parameters);
-static void AppTask(void *parameters);
+//任务句柄
+TaskHandle_t    SkyStartTask_Handler;
+TaskHandle_t    SkyAppTask_Handler;
 
-//xTaskHandle
+//定时器句柄
+TimerHandle_t   Sky_MqttHeartTimer;
 
+
+
+//线程回调函数
+static void Sky_StartThread(void *parameters);
+static void Sky_AppThread(void *parameters);
+//定时器回调函数
+static void Sky_TimerCallback(void *para);
+
+static void Sky_BoardInit(void);
 
 int main(void)
 {
+    Sky_BoardInit();
+    printf("STM32F4-FreeRTOS Version :v%s\r\n",VERSION);
+    
+    xTaskCreate((TaskFunction_t )Sky_StartThread,
+                (const char *) "starttask",
+                (uint16_t      )SKY_STARTTASK_SIZE,
+                (void *)        NULL,
+                (UBaseType_t   )SKY_STARTTASK_PRIO,
+                (TaskHandle_t *)&SkyStartTask_Handler);
+                
+     vTaskStartScheduler();
+  /* USER CODE END 3 */
+}
+
+/***
+*@beif  Sky_BoardInit
+*@para  void
+*@data  2021-5-30
+*@auth  GECHENG
+*@note  硬件初始化
+*/
+void Sky_BoardInit(void)
+{
     HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
     SystemClock_Config();
     MX_GPIO_Init();
     key_init();
     led_init();
     uart1_init();
     PCF8574_Init();
-    printf("STM32F4-FreeRTOS Version :v%s\r\n",VERSION);
-    xTaskCreate((TaskFunction_t )StartTask,
-                (const char *) "starttask",
-                (uint16_t      )START_TASK_SIZE,
-                (void *)        NULL,
-                (UBaseType_t   )START_TASK_PRIO,
-                (TaskHandle_t *)&StartTask_Handler);
-                
-     vTaskStartScheduler();
-
-    while (1)
-    {
-        
-        
-        
-    }
-  /* USER CODE END 3 */
 }
 
-void StartTask(void *parameters)
+/***
+*@beif  Sky_StartThread
+*@para  void
+*@data  2021-5-30
+*@auth  GECHENG
+*@note  系统初始化线程
+*/
+void Sky_StartThread(void *parameters)
 {
-    
-
-    while(lwip_comm_init())
+    while(lwip_comm_init())                                                         //初始化LWIP协议
     {
         printf("LWIP init fail\r\n");
     }
     printf("LWIP init Success\r\n");
-    lwip_comm_dhcp_creat();
 
-    xTaskCreate((TaskFunction_t )AppTask,
+    Sky_TcpClientThread_Init();                                                              //创建TCP客户端线程
+#if LWIP_DHCP
+    lwip_comm_dhcp_creat();
+#endif
+
+
+    
+    Sky_MqttHeartTimer=xTimerCreate("mqtt heart",SKY_MQTTTIMERHEART_PERIOD,pdTRUE,0,Sky_TimerCallback);                //创建心跳定时器 56ms
+    
+    xTaskCreate((TaskFunction_t )Sky_AppThread,
                 (const char *   )"apptask",
-                (uint16_t       )APP_TASK_SIZE,
+                (uint16_t       )SKY_APPTASK_SIZE,
                 (void *)         NULL,
-                (UBaseType_t    )APP_TASK_PPRIO,
-                (TaskHandle_t * )&AppTask_Handler);
+                (UBaseType_t    )SKY_APPTASK_PPRIO,
+                (TaskHandle_t * )&SkyAppTask_Handler);
                 
-    vTaskDelete(StartTask_Handler);
+                
+    xTimerStart(Sky_MqttHeartTimer,0);                                                          //开启心跳定时器
+                
+    vTaskDelete(SkyStartTask_Handler);                                                          //删除开始线程
+                
     vTaskStartScheduler();
 }
 
-void AppTask(void *parameters)
+/***
+*@beif  Sky_StartThread
+*@para  void
+*@data  2021-5-30
+*@auth  GECHENG
+*@note  系统初始化线程
+*/
+void Sky_AppThread(void *parameters)
 {
 
-    vTaskDelete(AppTask_Handler);
-    while(1)
-    {
-        vTaskDelay(1);
-    }
     uint8_t *buffer;
-    uint8_t times,i,key=0;
-    uint32_t freemem;
+    uint8_t key=0;
+    
     while(1)
     {
         key =Sky_KeyScan(0);
-        switch(key)
+        switch (key)
         {
-            case WKUP_PRES:
-                buffer =pvPortMalloc(30);
-                printf("申请到的内存地址为:%#x\r\n",(int)(buffer));
-                break;
             case KEY0_PRES:
-                if(buffer!=NULL)
-                {
-                    vPortFree(buffer);
-                    printf("内存释放\r\n");
-                }
-                buffer =NULL;
+                LEDRTOGG;
                 break;
-            case KEY1_PRES:
-                if(buffer!=NULL)
-                {
-                    times++;
-                    sprintf((char*)buffer,"User %d Times",times);
-                    printf("写入内存\r\n");
-                    
-                }
-                break;
-            
         }
-        freemem =xPortGetFreeHeapSize();
-        i++;
-        if(i==50)
-        {
-            printf("freemem =%d\r\n",freemem);
-            i=0;
-        }
-        vTaskDelay(10);
+        printf(" SKY_APP THRAD IS running\r\n");
+        vTaskDelay(100);
     }
     
 }
-
-void MessTask(void *parameters)
+/**
+*@beif  Sky_TimerCallback
+*/
+void Sky_TimerCallback(void *para)
 {
-    
+    if(mqtt_alive ==1)
+    {
+        LEDG(1);
+        mqtt_sendheart();
+    }
+    printf("MQTT Heart TIMER is running\r\n");
 }
+
+
 /**
   * @brief System Clock Configuration
   * @retval None

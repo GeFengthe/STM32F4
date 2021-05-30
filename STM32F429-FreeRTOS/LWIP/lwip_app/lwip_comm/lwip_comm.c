@@ -10,6 +10,7 @@
 #include "lwip/ip_frag.h"
 #include "lwip/tcpip.h" 
 #include "lwip/timers.h"
+#include "lwip/dns.h"
 #include "lan8720.h"
 #include "delay.h"
 #include "uart.h" 
@@ -17,22 +18,7 @@
 #include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//本程序只供学习使用，未经作者许可，不得用于其它任何用途
-//ALIENTEK STM32F429开发板
-//lwip通用驱动 代码	   
-//正点原子@ALIENTEK
-//技术论坛:www.openedv.com
-//创建日期:2016/1/13
-//版本：V1.0
-//版权所有，盗版必究。
-//Copyright(C) 广州市星翼电子科技有限公司 2009-2019
-//All rights reserved									  
-//*******************************************************************************
-//修改信息
-//无
-////////////////////////////////////////////////////////////////////////////////// 	   
-   
+
 __lwip_dev lwipdev;						//lwip控制结构体 
 struct netif lwip_netif;				//定义一个全局的网络接口
 
@@ -49,13 +35,15 @@ TaskHandle_t LWIP_DHCP_TaskHandler;
 
 //lwip DHCP任务
 //设置任务优先级
-#define LWIP_DHCP_TASK_PRIO       	    8
+#define LWIP_DHCP_TASK_PRIO       	    10
 //设置任务堆栈大小
 #define LWIP_DHCP_STK_SIZE  		    256
 //任务堆栈，采用内存管理的方式控制申请	
 	
 //任务函数
 void lwip_dhcp_task(void *pdata); 
+
+//SemaphoreHandle_t   dnsmutex_local;         //用开头
 
 //用于以太网中断调用
 void lwip_pkt_handle(void)
@@ -71,11 +59,14 @@ u8 lwip_comm_mem_malloc(void)
 	u32 mempsize;
 	u32 ramheapsize;
     INTX_DISABLE();                         //开中断
+    
 	mempsize=memp_get_memorysize();			//得到memp_memory数组大小
 	memp_memory=pvPortMalloc(mempsize);	//为memp_memory申请内存
 	ramheapsize=LWIP_MEM_ALIGN_SIZE(MEM_SIZE)+2*LWIP_MEM_ALIGN_SIZE(4*3)+MEM_ALIGNMENT;//得到ram heap大小
-	ram_heap=pvPortMalloc(ramheapsize);	//为ram_heap申请内存    
+	ram_heap=pvPortMalloc(ramheapsize);	//为ram_heap申请内存 
+    
     INTX_ENABLE();                          //关闭中断
+    
 	if(!memp_memory||!ram_heap)//有申请失败的
 	{
 		lwip_comm_mem_free();
@@ -99,7 +90,7 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
 	lwipx->remoteip[0]=192;	
 	lwipx->remoteip[1]=168;
 	lwipx->remoteip[2]=3;
-	lwipx->remoteip[3]=104;
+	lwipx->remoteip[3]=44;
 	//MAC地址设置(高三字节固定为:2.0.0,低三字节用STM32唯一ID)
 	lwipx->mac[0]=2;//高三字节(IEEE称之为组织唯一ID,OUI)地址固定为:2.0.0
 	lwipx->mac[1]=0;
@@ -147,6 +138,7 @@ u8 lwip_comm_init(void)
         if(retry>5) {retry=0;return 3;} //LAN8720初始化失败
     }
 	tcpip_init(NULL,NULL);				//初始化tcp ip内核,该函数里面会创建tcpip_thread内核任务
+//    dns_init();                         //开启DNS域名解析功能
 
 #if LWIP_DHCP		//使用动态IP
 	ipaddr.addr = 0;
@@ -176,6 +168,7 @@ u8 lwip_comm_init(void)
 void lwip_comm_dhcp_creat(void)
 {
     taskENTER_CRITICAL();
+//    dnsmutex_local =xSemaphoreCreateMutex();  
     xTaskCreate((TaskFunction_t)lwip_dhcp_task,
                 (const char *)"DHCP_TASK",
                 (uint16_t )LWIP_DHCP_STK_SIZE,
@@ -190,10 +183,33 @@ void lwip_comm_dhcp_delete(void)
 	dhcp_stop(&lwip_netif); 		//关闭DHCP
 	vTaskDelete(LWIP_DHCP_TaskHandler);	//删除DHCP任务
 }
+
+void Sky_GetAliyun(const char *name,struct ip_addr *ipaddr,void *arg)
+{
+    uint8_t ip[4];
+    ip[0] =ipaddr->addr>>24;
+    ip[1] =ipaddr->addr>>16;
+    ip[2] =ipaddr->addr>>8;
+    ip[3] =ipaddr->addr;
+    
+    lwipdev.remoteip[0] =ip[3];
+    lwipdev.remoteip[1] =ip[2];
+    lwipdev.remoteip[2] =ip[1];
+    lwipdev.remoteip[3] =ip[0];
+//    xSemaphoreGive(dnsmutex_local);                                             //释放互斥量
+    printf("%s 域名解析的IP:%d,%d,%d,%d\r\n",name,ip[3],ip[2],ip[1],ip[0]);
+}
+void Dns_Test(void)
+{
+    struct ip_addr DNS_IP;
+    char hostname[] ="a16NWgAwqsz.iot-as-mqtt.cn-shanghai.aliyuncs.com";
+    dns_gethostbyname(hostname,&DNS_IP,Sky_GetAliyun,NULL);
+}
 //DHCP处理任务
 void lwip_dhcp_task(void *pdata)
 {
 	u32 ip=0,netmask=0,gw=0;
+//    xSemaphoreTake(dnsmutex_local,portMAX_DELAY);
 	dhcp_start(&lwip_netif);//开启DHCP 
 	lwipdev.dhcpstatus=0;	//正在DHCP
 	printf("正在查找DHCP服务器,请稍等...........\r\n");   
@@ -245,3 +261,4 @@ void lwip_dhcp_task(void *pdata)
 	lwip_comm_dhcp_delete();//删除DHCP任务 
 }
 #endif 
+

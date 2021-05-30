@@ -30,7 +30,6 @@ stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp.h
 stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp_std.h
 stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\lwip/snmp.h
 stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\lwip/dhcp.h
-stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\lwip/udp.h
 stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/autoip.h
 stm32f429\etharp.o: ..\LWIP\lwip-1.4.1\src\include\netif/etharp.h
 stm32f429\etharp.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\Inc;..\APP\Inc;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\LWIP\arch;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\netif;..\LWIP\lwip_app\lwip_comm;..\LWIP</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\Inc;..\APP\Inc;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\LWIP\arch;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\netif;..\LWIP\lwip_app\lwip_comm;..\LWIP;..\LWIP\lwip_app\lwip_udp;..\LWIP\lwip_app\lwip_tcp;..\APP\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -685,6 +685,13 @@
         </Group>
         <Group>
           <GroupName>APP</GroupName>
+          <Files>
+            <File>
+              <FileName>mqtt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\src\mqtt.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>LWIP_APP</GroupName>
@@ -693,6 +700,16 @@
               <FileName>lwip_comm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip_app\lwip_comm\lwip_comm.c</FilePath>
+            </File>
+            <File>
+              <FileName>udp_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\lwip_udp\udp_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>lwip_tcp_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.c</FilePath>
             </File>
           </Files>
         </Group>

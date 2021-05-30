@@ -46,11 +46,11 @@ stm32f429\lan8720.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h
 stm32f429\lan8720.o: ..\BSP\Inc\pcf8574.h
 stm32f429\lan8720.o: ..\BSP\Inc\myiic.h
 stm32f429\lan8720.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
-stm32f429\lan8720.o: ..\BSP\Inc\delay.h
+stm32f429\lan8720.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\lan8720.o: ../Core/Inc/main.h
 stm32f429\lan8720.o: ..\BSP\Inc\delay.h
+stm32f429\lan8720.o: ../Core/Inc/main.h
 stm32f429\lan8720.o: ..\BSP\Inc\key.h
-stm32f429\lan8720.o: ../Core/Inc/main.h
 stm32f429\lan8720.o: ..\FreeRTOS\include\FreeRTOS.h
 stm32f429\lan8720.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 stm32f429\lan8720.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -61,3 +61,4 @@ stm32f429\lan8720.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\lan8720.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\lan8720.o: ..\FreeRTOS\include\task.h
 stm32f429\lan8720.o: ..\FreeRTOS\include\list.h
+stm32f429\lan8720.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h

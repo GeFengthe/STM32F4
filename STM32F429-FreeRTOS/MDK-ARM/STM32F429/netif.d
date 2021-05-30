@@ -34,5 +34,3 @@ stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\netif/etharp.h
 stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\lwip/stats.h
 stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp.h
 stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp_std.h
-stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\lwip/dhcp.h
-stm32f429\netif.o: ..\LWIP\lwip-1.4.1\src\include\lwip/udp.h

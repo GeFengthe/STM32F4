@@ -49,7 +49,4 @@ void LCD_Init(void)
     SRAM_Handler.Init.MemoryType = FMC_MEMORY_TYPE_SRAM;                        //SRAM
     SRAM_Handler.Init.MemoryDataWidth =FMC_NORSRAM_MEM_BUS_WIDTH_16;            //16位数据宽度
     SRAM_Handler.Init.BurstAccessMode =FMC_BURST_ACCESS_MODE_DISABLE;           //是否使用突发访问，仅对同步突发存储器有效，此处未用到。
-
-    
-
 }

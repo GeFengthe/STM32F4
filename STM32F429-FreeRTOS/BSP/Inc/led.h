@@ -9,6 +9,8 @@
 #define LEDR(n)             n?HAL_GPIO_WritePin(LED_Port,LEDR_Pin,GPIO_PIN_RESET):HAL_GPIO_WritePin(LED_Port,LEDR_Pin,GPIO_PIN_SET)
 #define LEDG(n)             n?HAL_GPIO_WritePin(LED_Port,LEDG_Pin,GPIO_PIN_RESET):HAL_GPIO_WritePin(LED_Port,LEDG_Pin,GPIO_PIN_SET)
 
+#define LEDGTOGG            HAL_GPIO_TogglePin(LED_Port,LEDG_Pin)
+#define LEDRTOGG            HAL_GPIO_TogglePin(LED_Port,LEDR_Pin)
 extern void led_init(void);
 
 #endif

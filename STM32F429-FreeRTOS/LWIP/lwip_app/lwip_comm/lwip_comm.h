@@ -2,6 +2,7 @@
 #define _LWIP_COMM_H 
 //#include "lan8720.h" 
 #include "sys.h"
+#include "lwip_tcp_demo.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32F429开发板
@@ -35,6 +36,8 @@ typedef struct
 					//2,成功获取DHCP地址
 					//0XFF,获取失败.
 }__lwip_dev;
+
+//SemaphoreHandle_t   dnsmutex_local;         //用开头
 extern __lwip_dev lwipdev;	//lwip控制结构体
 
 void lwip_pkt_handle(void);

@@ -74,3 +74,9 @@ stm32f429\main.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/ip_addr.h
 stm32f429\main.o: ..\LWIP\lwip-1.4.1\src\include\lwip/def.h
 stm32f429\main.o: ..\LWIP\lwip-1.4.1\src\include\lwip/pbuf.h
 stm32f429\main.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
+stm32f429\main.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
+stm32f429\main.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
+stm32f429\main.o: ..\LWIP\lwip_app\lwip_udp\udp_demo.h
+stm32f429\main.o: ..\FreeRTOS\include\queue.h
+stm32f429\main.o: ..\FreeRTOS\include\Semphr.h
+stm32f429\main.o: ..\FreeRTOS\include\timers.h

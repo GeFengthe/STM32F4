@@ -21,7 +21,7 @@ void key_init(void)
     GPIO_InitStruct.Pull =GPIO_PULLDOWN;
     GPIO_InitStruct.Mode =GPIO_MODE_INPUT;
     GPIO_InitStruct.Speed =GPIO_SPEED_FAST;
-    HAL_GPIO_Init(KEYUP_Port,&GPIO_InitStruct);  
+    HAL_GPIO_Init(KEYUP_Port,&GPIO_InitStruct);
 }
 
 uint8_t Sky_KeyScan(uint8_t mode)

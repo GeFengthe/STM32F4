@@ -19,6 +19,7 @@
 #define MEMP_NUM_TCP_PCB_LISTEN 6		//MEMP_NUM_TCP_PCB_LISTEN:能够监听的TCP连接数量
 #define MEMP_NUM_TCP_SEG        15		//MEMP_NUM_TCP_SEG:最多同时在队列中的TCP段数量
 #define MEMP_NUM_SYS_TIMEOUT    8		//MEMP_NUM_SYS_TIMEOUT:能够同时激活的timeout个数
+#define LWIP_DNS                1
 
 //pbuf选项
 #define PBUF_POOL_SIZE          20		//PBUF_POOL_SIZE:pbuf内存池个数
@@ -45,7 +46,7 @@
 #define TCP_SND_QUEUELEN        (2* TCP_SND_BUF/TCP_MSS)	//TCP_SND_QUEUELEN: TCP发送缓冲区大小(pbuf).这个值最小为(2 * TCP_SND_BUF/TCP_MSS)
 #define TCP_WND                 (2*TCP_MSS)		//TCP发送窗口
 #define LWIP_ICMP               1 	//使用ICMP协议
-#define LWIP_DHCP               1	//使用DHCP
+#define LWIP_DHCP               0	//使用DHCP
 #define LWIP_UDP                1 	//使用UDP服务
 #define UDP_TTL                 255 //UDP数据包生存时间
 #define LWIP_STATS 0

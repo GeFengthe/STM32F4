@@ -12,5 +12,7 @@ void led_init(void)
     
     GPIO_InitStruct.Pin =LEDG_Pin;
     HAL_GPIO_Init(LED_Port,&GPIO_InitStruct);
+    LEDG(0);
+    LEDR(0);
 }
 
