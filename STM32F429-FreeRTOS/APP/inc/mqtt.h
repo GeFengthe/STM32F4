@@ -19,6 +19,6 @@ extern u16 mqtt_txlen;
 
 extern uint8_t MQTT_Connect_Pack(u8 *mqtt_buff,u32 *mqtt_len);
 extern void MQTT_SendHeart(void);
-extern uint8_t MQTT_PublishData_Pack(char *topic ,char *message, uint8_t qos);
-extern uint8_t MQTT_SubsrcibeTopic(char *topic,uint8_t qos,uint8_t whether);
+extern u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos,u8 *mqtt_txbuf,u32 *len);
+extern uint8_t MQTT_SubsrcibeTopic(char *topic,uint8_t qos,uint8_t whether,u8 *mqtt_txbuf,u32 *len);
 #endif

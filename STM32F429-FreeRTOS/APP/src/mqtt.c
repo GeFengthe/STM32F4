@@ -12,8 +12,6 @@ char *MQTT_CLIENTID ="00001|securemode=3,signmethod=hmacsha1|";
 char *MQTT_USARNAME ="light_1&a1lHej9J2s1";
 char *MQTT_PASSWORD ="C50CEEE8046D928B822C0E76808000EF6E0E3BC3";
 
-u8  mqtt_txbuf[256];
-u16 mqtt_txlen;
 typedef enum{
     //名字        值           报文流动方向          描述
     
@@ -144,15 +142,15 @@ uint8_t MQTT_Connect_Pack(u8 *mqtt_buff,u32 *mqtt_len)
 //topic   主题 
 //message 消息
 //qos     消息等级 
-u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos)
+u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos,u8 *mqtt_txbuf,u32 *len)
 {
     static u16 id=0;
     uint8_t encodedByte;
+    u32 mqtt_txlen;
     int topicLength =strlen(topic);
     int messageLength =strlen(message);
     int Datalen;
     mqtt_txlen =0;
-    memset(mqtt_txbuf,0,512);
     //有效载荷的长度
     if(qos)
     {
@@ -190,13 +188,8 @@ u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos)
     
     memcpy(&mqtt_txbuf[mqtt_txlen],message,messageLength);
     mqtt_txlen +=messageLength;
-//    printf("messagelen=%d  topiclen=%d  mqtt_txlen=%d\r\n",messageLength,topicLength,mqtt_txlen);
-//    for(uint16_t i=0;i<mqtt_txlen;i++)
-//    {
-//        printf(" 0x%x   |",mqtt_txbuf[i]);
-//    }
-//    memset(USART2_RX_BUF,0,1024);
-    MQTT_SendBuf(mqtt_txbuf,mqtt_txlen);
+    *len =mqtt_txlen;
+
     return mqtt_txlen;
 
 }
@@ -208,15 +201,15 @@ u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos)
     whether     订阅/取消订阅请求包 (1表示订阅,0表示取消订阅)
 返回值: 0表示成功 1表示失败
 */
-uint8_t MQTT_SubsrcibeTopic(char *topic,uint8_t qos,uint8_t whether)
+uint8_t MQTT_SubsrcibeTopic(char *topic,uint8_t qos,uint8_t whether,u8 *mqtt_txbuf,u32 *len)
 {
     uint8_t cnt =2;
     uint8_t wait;
+    u32 mqtt_txlen;
     int topiclen =strlen(topic);                    //可变报头的长度（2字节）加上有效载荷的长度
     int Datalen =0;
     uint8_t encodedByte =0;
     mqtt_txlen =0;
-    memset(mqtt_txbuf,0,256);
     Datalen =2+(topiclen+2)+(whether?1:0);
 
 //控制报文
@@ -252,30 +245,7 @@ if(whether)
 {
     mqtt_txbuf[mqtt_txlen++]=qos;
 }
-#if ESP8266
-while(cnt--)
-{
-    memset(USART2_RX_BUF,0,sizeof(USART2_RX_BUF));
-    MQTT_SendBuf(mqtt_txbuf,mqtt_txlen);
-    wait=30;
-    while(wait--)
-    {
-        if(USART2_RX_BUF[0]==parket_subAck[0]&&USART2_RX_BUF[1]==parket_subAck[1])
-        {
-            printf("subAck[0]=%d\r\n",USART2_RX_BUF[0]);
-            USART2_RX_STA=0;
-            return 1;            //订阅成功
-        }
-        delay_ms(100);
-    }
-}
-if(cnt) return 1;  //订阅成功
-#else
-//memset(USART2_RX_BUF,0,sizeof(USART2_RX_BUF));
-MQTT_SendBuf(mqtt_txbuf,mqtt_txlen);
-#endif
 
+*len =mqtt_txlen;
 return 0;
-
-
 }

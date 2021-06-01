@@ -4,7 +4,7 @@
 #include "lwip_comm.h"
 
 #define TCP_CLIENT_RX_BUFSIZE               1000        //接收缓冲区
-#define REMOTE_PORT                         6801        //定义远端主机IP地址
+#define REMOTE_PORT                         1883        //定义远端主机IP地址
 #define LWIP_SEND_DATA                      0X80        //定义有数据发送
 
 #define FALSE                               1
