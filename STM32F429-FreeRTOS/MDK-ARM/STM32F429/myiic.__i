@@ -1,0 +1,6 @@
+--c99 -c --cpu Cortex-M4.fp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\BSP\Inc -I ..\APP\Inc -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\RVDS\ARM_CM4F -I ..\LWIP\arch -I ..\LWIP\lwip-1.4.1\src\include -I ..\LWIP\lwip-1.4.1\src\include\ipv4 -I ..\LWIP\lwip-1.4.1\src\netif -I ..\LWIP\lwip_app\lwip_comm -I ..\LWIP -I ..\LWIP\lwip_app\lwip_udp -I ..\LWIP\lwip_app\lwip_tcp -I ..\APP\inc -I ..\LWIP\lwip_app\lwip_socket -I ..\LWIP\lwip_app\lwip_http -I ..\MQTTPacket\src -I ..\MQTTPacket\port
+-I.\RTE\_STM32F429
+-IE:\Keil_v5\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+-IE:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+-D__UVISION_VERSION="525" -D_RTE_ -DSTM32F429xx -DUSE_HAL_DRIVER -DSTM32F429xx
+-o stm32f429\myiic.o --depend stm32f429\myiic.d "..\BSP\src\myiic.c"

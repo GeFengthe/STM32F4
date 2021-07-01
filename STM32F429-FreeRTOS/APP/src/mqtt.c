@@ -1,251 +1,621 @@
 #include "mqtt.h"
 #include "string.h"
+#include "transport.h"
+#include "MQTTPacket.h"
+#include "lwip/sockets.h"
+#include "cJSON_Process.h"
+TaskHandle_t Sky_MqttRecv_Handler;
+//TaskHandle_t Sky_MqttSend_Handler;
 
-//#include "esp8266.h"
-
-char MQTT_ClientID[100];                    //å®¢æˆ·ç«¯ID
-char MQTT_UserName[100];                    //ç”¨æˆ·æ°‘
-char MQTT_PassWord[100];                    //ç§˜é’¥
-
-
-char *MQTT_CLIENTID ="00001|securemode=3,signmethod=hmacsha1|";
-char *MQTT_USARNAME ="light_1&a1lHej9J2s1";
-char *MQTT_PASSWORD ="C50CEEE8046D928B822C0E76808000EF6E0E3BC3";
-
-typedef enum{
-    //åå­—        å€¼           æŠ¥æ–‡æµåŠ¨æ–¹å‘          æè¿°
-    
-    M_RESERVED1 =0  ,   //      ç¦æ­¢                  ä¿ç•™
-    M_CONNECT       ,   //      å®¢æˆ·ç«¯åˆ°æœåŠ¡å™¨         å®¢æˆ·ç«¯è¯·æ±‚è¿æ¥æœåŠ¡ç«¯æŠ¥æ–‡
-    M_CONNACK       ,   //      æœåŠ¡å™¨åˆ°å®¢æˆ·ç«¯         è¿æ¥æŠ¥æ–‡åº”ç­”
-    M_PUBLISH       ,   //      ä¸¤ä¸ªæ–¹å‘éƒ½å…è®¸          å‘å¸ƒæ¶ˆæ¯
-    M_PUBACK        ,   //      ä¸¤ä¸ªæ–¹å‘éƒ½å…è®¸         QoS 1æ¶ˆæ¯å‘å¸ƒç¡®è®¤
-    M_PUBREC        ,   //      ä¸¤ä¸ªæ–¹å‘éƒ½å…è®¸	    å‘å¸ƒæ”¶åˆ°ï¼ˆä¿è¯äº¤ä»˜ç¬¬ä¸€æ­¥ï¼‰
-    M_PUBREL        ,   //      ä¸¤ä¸ªæ–¹å‘éƒ½å…è®¸	    å‘å¸ƒé‡Šæ”¾ï¼ˆä¿è¯äº¤ä»˜ç¬¬äºŒæ­¥ï¼‰
-    M_PUBCOMP       ,   //      ä¸¤ä¸ªæ–¹å‘éƒ½å…è®¸	    QoS 2æ¶ˆæ¯å‘å¸ƒå®Œæˆï¼ˆä¿è¯äº¤äº’ç¬¬ä¸‰æ­¥ï¼‰
-    M_SUBSCRIBE     ,   //      å®¢æˆ·ç«¯åˆ°æœåŠ¡ç«¯	    å®¢æˆ·ç«¯è®¢é˜…è¯·æ±‚
-    M_SUBACK        ,   //      æœåŠ¡ç«¯åˆ°å®¢æˆ·ç«¯	    è®¢é˜…è¯·æ±‚æŠ¥æ–‡ç¡®è®¤
-    M_UNSUBSCRIBE   ,   //      å®¢æˆ·ç«¯åˆ°æœåŠ¡ç«¯	    å®¢æˆ·ç«¯å–æ¶ˆè®¢é˜…è¯·æ±‚
-    M_UNSUBACK      ,   //      æœåŠ¡ç«¯åˆ°å®¢æˆ·ç«¯	    å–æ¶ˆè®¢é˜…æŠ¥æ–‡ç¡®è®¤
-    M_PINGREQ       ,   //      å®¢æˆ·ç«¯åˆ°æœåŠ¡ç«¯	    å¿ƒè·³è¯·æ±‚
-    M_PINGRESP      ,   //      æœåŠ¡ç«¯åˆ°å®¢æˆ·ç«¯	    å¿ƒè·³å“åº”
-    M_DISCONNECT    ,   //      å®¢æˆ·ç«¯åˆ°æœåŠ¡ç«¯	    å®¢æˆ·ç«¯æ–­å¼€è¿æ¥
-    M_RESERVED2     ,   //      ç¦æ­¢	                ä¿ç•™
-    
-}_typdef_mqtt_message;
-
+/******************************* È«¾Ö±äÁ¿ÉùÃ÷ ************************************/
 /*
-å‡½æ•°åŠŸèƒ½: åˆå§‹åŒ–é˜¿é‡Œäº‘ç‰©è”ç½‘æœåŠ¡å™¨çš„ç™»å½•å‚æ•°
-*/
- 
-//å¯†ç 
-//clientId*deviceName*productKey#
-// *æ›¿æ¢ä¸ºDeviceName  #æ›¿æ¢ä¸ºProductKey  åŠ å¯†å¯†é’¥æ˜¯DeviceSecret  åŠ å¯†æ–¹å¼æ˜¯HmacSHA1  
-//PassWordæ˜æ–‡=clientIdmq2_iotdeviceNamemq2_iotproductKeya1WLC5GuOfx
-//hmacsha1åŠ å¯†ç½‘ç«™ï¼šhttp://encode.chahuo.com/
-//åŠ å¯†çš„å¯†é’¥ï¼šDeviceSecret
-
-
-//MQTTå‘é€æ•°æ®
-void MQTT_SendBuf(uint8_t *buf,uint16_t len)
+ * µ±ÎÒÃÇÔÚĞ´Ó¦ÓÃ³ÌĞòµÄÊ±ºò£¬¿ÉÄÜĞèÒªÓÃµ½Ò»Ğ©È«¾Ö±äÁ¿¡£
+ */
+int MQTT_Socket=0;
+//¶¨Òå×Ô¼ºÓÃµÄÏûÏ¢½á¹¹Ìå
+MQTT_USER_MSG mqtt_user_msg;
+/************************************************************************
+** º¯ÊıÃû³Æ: MQTT_Connect								
+** º¯Êı¹¦ÄÜ: ³õÊ¼»¯¿Í»§¶Ë²¢µÇÂ¼·şÎñÆ÷
+** Èë¿Ú²ÎÊı: int32_t sock:ÍøÂçÃèÊö·û
+** ³ö¿Ú²ÎÊı: >=0:·¢ËÍ³É¹¦ <0:·¢ËÍÊ§°Ü
+** ±¸    ×¢: 
+************************************************************************/
+uint8_t MQTT_Connect(void)
 {
-//    lwip_tcpClient_send(buf,len);
-    for(uint8_t i=0;i<len;i++)
-    {
-        printf("buf[%d] =0x%x   ",i,buf[i]);
-    }
-//    ESP8266_ATSendBuf(buf,len);
-}
-//MQTTå‘é€å¿ƒè·³
-//void MQTT_SendHeart(void)
-//{
-//    MQTT_SendBuf((u8 *)parket_heart,sizeof(parket_heart));
-//}
+    MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
+    uint8_t buf[200];
+    int buflen = sizeof(buf);
+    int len = 0;
+    data.clientID.cstring = CLIENT_ID;                   //Ëæ»ú
+    data.keepAliveInterval = KEEPLIVE_TIME;             //±£³Ö»îÔ¾
+    data.username.cstring = USER_NAME;                  //ÓÃ»§Ãû
+    data.password.cstring = PASSWORD;                   //ÃÜÔ¿
+    data.MQTTVersion = MQTT_VERSION;                    //3±íÊ¾3.1°æ±¾£¬4±íÊ¾3.1.1°æ±¾
+    data.cleansession = 1;
+    //×é×°ÏûÏ¢
+    len = MQTTSerialize_connect((unsigned char *)buf, buflen, &data);
+    //·¢ËÍÏûÏ¢
+    transport_sendPacketBuffer(buf, len);
 
-
-/*
-å‡½æ•°åŠŸèƒ½: ç™»å½•æœåŠ¡å™¨
-å‡½æ•°è¿”å›å€¼: 1è¡¨ç¤ºæˆåŠŸ 0è¡¨ç¤ºå¤±è´¥
-*/
-uint8_t MQTT_Connect_Pack(u8 *mqtt_buff,u32 *mqtt_len)
-{
-    u8 encodedByte;
-    int ClientIDlen =strlen(MQTT_CLIENTID);                                              //0x27    0x13          0x28
-    int Usernamelen =strlen(MQTT_USARNAME);
-    int Passwordlen =strlen(MQTT_PASSWORD);
-    int Datalen;
-    u32 buff_len=0;
-//    memset(mqtt_txbuf,0,512);                                                         //æŒ‡é’ˆè¶Šç•Œè®¿é—®äº†
-    //å¯å˜æŠ¥å¤´+Payload  æ¯ä¸ªå­—æ®µåŒ…å«ä¸¤ä¸ªå­—èŠ‚çš„é•¿åº¦æ ‡è¯†
-    Datalen = 10+(ClientIDlen+2)+(Usernamelen+2)+(Passwordlen+2);
-    //å›ºå®šæŠ¥å¤´
-	//æ§åˆ¶æŠ¥æ–‡ç±»å‹
-    mqtt_buff[buff_len++]=0x10;
-    printf("Datalen=%d\r\n",Datalen);
-    do{
-        encodedByte =Datalen %128;
-        Datalen =Datalen/128;
-        if(Datalen >0)
-            encodedByte =encodedByte |128;                  //æŠŠæœ€é«˜ä¸ºç½®1è¡¨ç¤ºè¿˜æœ‰å»¶ç»­å­—èŠ‚
-        mqtt_buff[buff_len++] =encodedByte;
-    }while(Datalen>0);
-//    printf("mqtt_txbuf[1]=0x%x\r\n",mqtt_txbuf[1]);
-//    printf("mqtt_txlen=%d\r\n",mqtt_txlen);
-    //å¯å˜æŠ¥å¤´  (åŒ…å«å››ä¸ªå­—æ®µ åè®®å(protocol name) åè®®çº§åˆ«(protocol level) è¿æ¥æ ‡å¿—(Connect Flags) ä¿æŒè¿æ¥(keep alive)
-    //åè®®å
-    mqtt_buff[buff_len++] =0;
-    mqtt_buff[buff_len++] =4;
-    mqtt_buff[buff_len++] ='M';
-    mqtt_buff[buff_len++] ='Q';
-    mqtt_buff[buff_len++] ='T';
-    mqtt_buff[buff_len++] ='T';
-    
-    //åè®®çº§åˆ« å¯¹äº3.1.1ç‰ˆæœ¬ çš„åè®®çº§åˆ«æ˜¯çš„å€¼æ˜¯4(0x04);
-    mqtt_buff[buff_len++] =0x04;
-    
-    //è¿æ¥æ ‡å¿—
-    mqtt_buff[buff_len++] =0xc2;
-    //ä¿æŒè¿æ¥ keep alive æ˜¯ä¸€ä¸ªä»¥ç§’ä¸ºå•ä½çš„æ—¶é—´é—´éš”ï¼Œè¡¨ç¤ºä¸ºä¸€ä¸ª16ä½çš„å­— ï¼Œå®ƒæ˜¯æŒ‡åœ¨å®¢æˆ·ç«¯å‘é€
-    mqtt_buff[buff_len++] =0x00;
-    mqtt_buff[buff_len++] =60;         //60sä¸€ä¸ªå¿ƒè·³åŒ…
-    
-    //å®¢æˆ·ç«¯IDæœ‰æ•ˆè½½è·å­—æ®µ
-    mqtt_buff[buff_len++] =BYTE1(ClientIDlen);                      // Client ID length MSB
-    mqtt_buff[buff_len++] =BYTE0(ClientIDlen);                       // Client ID length LSB
-    memcpy(&mqtt_buff[buff_len],MQTT_CLIENTID,ClientIDlen);
-    buff_len +=ClientIDlen;
-    printf("clientIDlen=%d\r\n",ClientIDlen);
-    
-    //ç”¨æˆ·åæœ‰æ•ˆè½½è·å­—æ®µ
-    if(Usernamelen>0)
+    /* µÈ´ıÁ¬½ÓÏìÓ¦ */
+    if (MQTTPacket_read(buf, buflen, transport_getdata) == CONNACK)
     {
-        mqtt_buff[buff_len++] =BYTE1(Usernamelen);
-        mqtt_buff[buff_len++] =BYTE0(Usernamelen);
-        memcpy(&mqtt_buff[buff_len],MQTT_USARNAME,Usernamelen);
-        buff_len +=Usernamelen;
-        printf("Usernamelen=%d\r\n",Usernamelen);
-    }
-    //å¯†ç æœ‰æ•ˆè½½è·å­—æ®µ
-    if(Passwordlen>0)
-    {
-        mqtt_buff[buff_len++] =BYTE1(Passwordlen);
-        mqtt_buff[buff_len++] =BYTE0(Passwordlen);
-        memcpy(&mqtt_buff[buff_len],MQTT_PASSWORD,Passwordlen);
-        buff_len +=Passwordlen;
-        printf("Passwordlen=%d\r\n",Passwordlen);
-    }
-    *mqtt_len =buff_len;
-    return 0;   
-}
-
-//MQTTå‘å¸ƒæ•°æ®æ‰“åŒ…å‡½æ•°
-//topic   ä¸»é¢˜ 
-//message æ¶ˆæ¯
-//qos     æ¶ˆæ¯ç­‰çº§ 
-u8 MQTT_PublishData_Pack(char *topic ,char *message, u8 qos,u8 *mqtt_txbuf,u32 *len)
-{
-    static u16 id=0;
-    uint8_t encodedByte;
-    u32 mqtt_txlen;
-    int topicLength =strlen(topic);
-    int messageLength =strlen(message);
-    int Datalen;
-    mqtt_txlen =0;
-    //æœ‰æ•ˆè½½è·çš„é•¿åº¦
-    if(qos)
-    {
-    //æ•°æ®é•¿åº¦   ä¸»é¢˜å          æ ‡è¯†ç¬¦ æœ‰æ•ˆè½½è·
-        Datalen =(topicLength+2)+2+messageLength;
-    }else
-    {
-        Datalen =(topicLength+2)+messageLength;                              //qos=0çš„æ¶ˆæ¯æ²¡æœ‰æ ‡è¯†ç¬¦
-    }
-    //å›ºå®šæŠ¥å¤´
-    mqtt_txbuf[mqtt_txlen++]=0x30;                                              //MQTT Message Type PUBLISH
-    do
-    {
-        encodedByte=Datalen %128;
-        Datalen =Datalen/128;
-        if(Datalen>0)
+        unsigned char sessionPresent, connack_rc;
+        if (MQTTDeserialize_connack(&sessionPresent, &connack_rc, buf, buflen) != 1 || connack_rc != 0)
         {
-            encodedByte |=128;
+          PRINT_DEBUG("ÎŞ·¨Á¬½Ó£¬´íÎó´úÂëÊÇ: %d£¡\n", connack_rc);
+            return Connect_NOK;
         }
-        mqtt_txbuf[mqtt_txlen++]=encodedByte;
-    }while(Datalen >0);
-    
+        else 
+        {
+            PRINT_DEBUG("ÓÃ»§ÃûÓëÃÜÔ¿ÑéÖ¤³É¹¦£¬MQTTÁ¬½Ó³É¹¦£¡\n");
+            return Connect_OK;
+        }
+    }
+    else
+        PRINT_DEBUG("MQTTÁ¬½ÓÎŞÏìÓ¦£¡\n");
+        return Connect_NOTACK;
+}
 
-    mqtt_txbuf[mqtt_txlen++] =BYTE1(topicLength);                           //ä¸»é¢˜é•¿åº¦MSB
-    mqtt_txbuf[mqtt_txlen++] =BYTE0(topicLength);                           //ä¸»é¢˜é•¿åº¦LSB
-    memcpy(&mqtt_txbuf[mqtt_txlen],topic,topicLength);
-    mqtt_txlen+=topicLength;
+/************************************************************************
+** º¯ÊıÃû³Æ: MQTT_PingReq								
+** º¯Êı¹¦ÄÜ: ·¢ËÍMQTTĞÄÌø°ü
+** Èë¿Ú²ÎÊı: ÎŞ
+** ³ö¿Ú²ÎÊı: >=0:·¢ËÍ³É¹¦ <0:·¢ËÍÊ§°Ü
+** ±¸    ×¢: 
+************************************************************************/
+int32_t MQTT_PingReq(int32_t sock)
+{
+	  int32_t len;
+      uint8_t buf[200];
+      int32_t buflen = sizeof(buf);	 
+	  fd_set readfd;
+	  struct timeval tv;
+	  tv.tv_sec = 5;
+	  tv.tv_usec = 0;
+	
+	  FD_ZERO(&readfd);
+	  FD_SET(sock,&readfd);			
+	
+		len = MQTTSerialize_pingreq(buf, buflen);
+		transport_sendPacketBuffer(buf, len);
+	
+		//µÈ´ı¿É¶ÁÊÂ¼ş
+		if(select(sock+1,&readfd,NULL,NULL,&tv) == 0)
+			return -1;
+		
+	  //ÓĞ¿É¶ÁÊÂ¼ş
+		if(FD_ISSET(sock,&readfd) == 0)
+			return -2;
+		
+		if(MQTTPacket_read(buf, buflen, transport_getdata) != PINGRESP)
+			return -3;
+		
+		return 0;
+	
+}
+/************************************************************************
+** º¯ÊıÃû³Æ: MQTTSubscribe								
+** º¯Êı¹¦ÄÜ: ¶©ÔÄÏûÏ¢
+** Èë¿Ú²ÎÊı: int32_t sock£ºÌ×½Ó×Ö
+**           int8_t *topic£ºÖ÷Ìâ
+**           enum QoS pos£ºÏûÏ¢ÖÊÁ¿
+** ³ö¿Ú²ÎÊı: >=0:·¢ËÍ³É¹¦ <0:·¢ËÍÊ§°Ü
+** ±¸    ×¢: 
+************************************************************************/
+int32_t MQTTSubscribe(int32_t sock,char *topic,enum QoS pos)
+{
+	  static uint32_t PacketID = 0;
+	  uint16_t packetidbk = 0;
+	  int32_t conutbk = 0;
+	  uint8_t buf[100];
+	  int32_t buflen = sizeof(buf);
+	  MQTTString topicString = MQTTString_initializer;  
+	  int32_t len;
+	  int32_t req_qos,qosbk;
+	
+	  fd_set readfd;
+	  struct timeval tv;
+	  tv.tv_sec = 2;
+	  tv.tv_usec = 0;
+	
+	  FD_ZERO(&readfd);
+	  FD_SET(sock,&readfd);		
+	
+	  //¸´ÖÆÖ÷Ìâ
+      topicString.cstring = (char *)topic;
+		//¶©ÔÄÖÊÁ¿
+	  req_qos = pos;
+	
+	  //´®ĞĞ»¯¶©ÔÄÏûÏ¢
+      len = MQTTSerialize_subscribe(buf, buflen, 0, PacketID++, 1, &topicString, &req_qos);
+		//·¢ËÍTCPÊı¾İ
+	  if(transport_sendPacketBuffer(buf, len) < 0)
+				return -1;
+	  
+    //µÈ´ı¿É¶ÁÊÂ¼ş--µÈ´ı³¬Ê±
+		if(select(sock+1,&readfd,NULL,NULL,&tv) == 0)
+				return -2;
+		//ÓĞ¿É¶ÁÊÂ¼ş--Ã»ÓĞ¿É¶ÁÊÂ¼ş
+		if(FD_ISSET(sock,&readfd) == 0)
+				return -3;
+
+		//µÈ´ı¶©ÔÄ·µ»Ø--Î´ÊÕµ½¶©ÔÄ·µ»Ø
+		if(MQTTPacket_read(buf, buflen, transport_getdata) != SUBACK)
+				return -4;	
+		
+		//²ğ¶©ÔÄ»ØÓ¦°ü
+		if(MQTTDeserialize_suback(&packetidbk,1, &conutbk, &qosbk, buf, buflen) != 1)
+				return -5;
+		
+		//¼ì²â·µ»ØÊı¾İµÄÕıÈ·ĞÔ
+		if((qosbk == 0x80)||(packetidbk != (PacketID-1)))
+				return -6;
+		
+    //¶©ÔÄ³É¹¦
+		return 0;
+}
+
+
+/************************************************************************
+** º¯ÊıÃû³Æ: UserMsgCtl						
+** º¯Êı¹¦ÄÜ: ÓÃ»§ÏûÏ¢´¦Àíº¯Êı
+** Èë¿Ú²ÎÊı: MQTT_USER_MSG  *msg£ºÏûÏ¢½á¹¹ÌåÖ¸Õë
+** ³ö¿Ú²ÎÊı: ÎŞ
+** ±¸    ×¢: 
+************************************************************************/
+void UserMsgCtl(MQTT_USER_MSG  *msg)
+{
+		//ÕâÀï´¦ÀíÊı¾İÖ»ÊÇ´òÓ¡£¬ÓÃ»§¿ÉÒÔÔÚÕâÀïÌí¼Ó×Ô¼ºµÄ´¦Àí·½Ê½
+//   if(msg->msglenth > 2)    //Ö»ÓĞµ±ÏûÏ¢³¤¶È´óÓÚ2 "{}" µÄÊ±ºò²ÅÈ¥´¦ÀíËü 
+//   {
+      PRINT_DEBUG("*****ÊÕµ½¶©ÔÄµÄÏûÏ¢£¡******\n");
+      //·µ»Øºó´¦ÀíÏûÏ¢
+        if(msg->msglenth > 2)    //Ö»ÓĞµ±ÏûÏ¢³¤¶È´óÓÚ2 "{}" µÄÊ±ºò²ÅÈ¥´¦ÀíËü 
+   {
+      switch(msg->msgqos)
+      {
+        case 0:
+              PRINT_DEBUG("MQTT>>ÏûÏ¢ÖÊÁ¿£ºQoS0\n");
+              break;
+        case 1:
+              PRINT_DEBUG("MQTT>>ÏûÏ¢ÖÊÁ¿£ºQoS1\n");
+              break;
+        case 2:
+              PRINT_DEBUG("MQTT>>ÏûÏ¢ÖÊÁ¿£ºQoS2\n");
+              break;
+        default:
+              PRINT_DEBUG("MQTT>>´íÎóµÄÏûÏ¢ÖÊÁ¿\n");
+              break;
+      }
+      PRINT_DEBUG("MQTT>>ÏûÏ¢Ö÷Ìâ£º%s\n",msg->topic);	
+      PRINT_DEBUG("MQTT>>ÏûÏ¢ÀàÈİ£º%s\n",msg->msg);	
+      PRINT_DEBUG("MQTT>>ÏûÏ¢³¤¶È£º%d\n",msg->msglenth);	 
+
+      Proscess(msg->msg);
+    }
+	  //´¦ÀíÍêºóÏú»ÙÊı¾İ
+	  msg->valid  = 0;
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: GetNextPackID						
+** º¯Êı¹¦ÄÜ: ²úÉúÏÂÒ»¸öÊı¾İ°üID
+** Èë¿Ú²ÎÊı: ÎŞ
+** ³ö¿Ú²ÎÊı: uint16_t packetid:²úÉúµÄID
+** ±¸    ×¢: 
+************************************************************************/
+uint16_t GetNextPackID(void)
+{
+	 static uint16_t pubpacketid = 0;
+	 return pubpacketid++;
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: mqtt_msg_publish						
+** º¯Êı¹¦ÄÜ: ÓÃ»§ÍÆËÍÏûÏ¢
+** Èë¿Ú²ÎÊı: MQTT_USER_MSG  *msg£ºÏûÏ¢½á¹¹ÌåÖ¸Õë
+** ³ö¿Ú²ÎÊı: >=0:·¢ËÍ³É¹¦ <0:·¢ËÍÊ§°Ü
+** ±¸    ×¢: 
+************************************************************************/
+int32_t MQTTMsgPublish(int32_t sock, char *topic, int8_t qos, uint8_t* msg)
+{
+    int8_t retained = 0;      //±£Áô±êÖ¾Î»
+    uint32_t msg_len;         //Êı¾İ³¤¶È
+		uint8_t buf[MSG_MAX_LEN];
+		int32_t buflen = sizeof(buf),len;
+		MQTTString topicString = MQTTString_initializer;
+	  uint16_t packid = 0,packetidbk;
+	
+		//Ìî³äÖ÷Ìâ
+	  topicString.cstring = (char *)topic;
+
+	  //Ìî³äÊı¾İ°üID
+	  if((qos == QOS1)||(qos == QOS2))
+		{ 
+			packid = GetNextPackID();
+		}
+		else
+		{
+			  qos = QOS0;
+			  retained = 0;
+			  packid = 0;
+		}
+     
+    msg_len = strlen((char *)msg_len);
     
-    if(qos)
+		//ÍÆËÍÏûÏ¢
+		len = MQTTSerialize_publish(buf, buflen, 0, qos, retained, packid, topicString, (unsigned char*)msg, msg_len);
+		if(len <= 0)
+				return -1;
+		if(transport_sendPacketBuffer(buf, len) < 0)	
+				return -2;	
+		
+		//ÖÊÁ¿µÈ¼¶0£¬²»ĞèÒª·µ»Ø
+		if(qos == QOS0)
+		{
+				return 0;
+		}
+		
+		//µÈ¼¶1
+		if(qos == QOS1)
+		{
+				//µÈ´ıPUBACK
+			  if(WaitForPacket(sock,PUBACK,5) < 0)
+					 return -3;
+				return 1;
+			  
+		}
+		//µÈ¼¶2
+		if(qos == QOS2)	
+		{
+			  //µÈ´ıPUBREC
+			  if(WaitForPacket(sock,PUBREC,5) < 0)
+					 return -3;
+			  //·¢ËÍPUBREL
+        len = MQTTSerialize_pubrel(buf, buflen,0, packetidbk);
+				if(len == 0)
+					return -4;
+				if(transport_sendPacketBuffer(buf, len) < 0)	
+					return -6;			
+			  //µÈ´ıPUBCOMP
+			  if(WaitForPacket(sock,PUBREC,5) < 0)
+					 return -7;
+				return 2;
+		}
+		//µÈ¼¶´íÎó
+		return -8;
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: ReadPacketTimeout					
+** º¯Êı¹¦ÄÜ: ×èÈû¶ÁÈ¡MQTTÊı¾İ
+** Èë¿Ú²ÎÊı: int32_t sock:ÍøÂçÃèÊö·û
+**           uint8_t *buf:Êı¾İ»º´æÇø
+**           int32_t buflen:»º³åÇø´óĞ¡
+**           uint32_t timeout:³¬Ê±Ê±¼ä--0-±íÊ¾Ö±½Ó²éÑ¯£¬Ã»ÓĞÊı¾İÁ¢¼´·µ»Ø
+** ³ö¿Ú²ÎÊı: -1£º´íÎó,ÆäËû--°üÀàĞÍ
+** ±¸    ×¢: 
+************************************************************************/
+int32_t ReadPacketTimeout(int32_t sock,uint8_t *buf,int32_t buflen,uint32_t timeout)
+{
+		fd_set readfd;
+	  struct timeval tv;
+	  if(timeout != 0)
+		{
+				tv.tv_sec = timeout;
+				tv.tv_usec = 0;
+				FD_ZERO(&readfd);
+				FD_SET(sock,&readfd); 
+
+				//µÈ´ı¿É¶ÁÊÂ¼ş--µÈ´ı³¬Ê±
+				if(select(sock+1,&readfd,NULL,NULL,&tv) == 0)
+						return -1;
+				//ÓĞ¿É¶ÁÊÂ¼ş--Ã»ÓĞ¿É¶ÁÊÂ¼ş
+				if(FD_ISSET(sock,&readfd) == 0)
+						return -1;
+	  }
+		//¶ÁÈ¡TCP/IPÊÂ¼ş
+		return MQTTPacket_read(buf, buflen, transport_getdata);
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: deliverMessage						
+** º¯Êı¹¦ÄÜ: ½ÓÊÜ·şÎñÆ÷·¢À´µÄÏûÏ¢
+** Èë¿Ú²ÎÊı: MQTTMessage *msg:MQTTÏûÏ¢½á¹¹Ìå
+**           MQTT_USER_MSG *mqtt_user_msg:ÓÃ»§½ÓÊÜ½á¹¹Ìå
+**           MQTTString  *TopicName:Ö÷Ìâ
+** ³ö¿Ú²ÎÊı: ÎŞ
+** ±¸    ×¢: 
+************************************************************************/
+void deliverMessage(MQTTString  *TopicName,MQTTMessage *msg,MQTT_USER_MSG *mqtt_user_msg)
+{
+		//ÏûÏ¢ÖÊÁ¿
+		mqtt_user_msg->msgqos = msg->qos;
+		//±£´æÏûÏ¢
+		memcpy(mqtt_user_msg->msg,msg->payload,msg->payloadlen);
+		mqtt_user_msg->msg[msg->payloadlen] = 0;
+		//±£´æÏûÏ¢³¤¶È
+		mqtt_user_msg->msglenth = msg->payloadlen;
+		//ÏûÏ¢Ö÷Ìâ
+		memcpy((char *)mqtt_user_msg->topic,TopicName->lenstring.data,TopicName->lenstring.len);
+		mqtt_user_msg->topic[TopicName->lenstring.len] = 0;
+		//ÏûÏ¢ID
+		mqtt_user_msg->packetid = msg->id;
+		//±êÃ÷ÏûÏ¢ºÏ·¨
+		mqtt_user_msg->valid = 1;		
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: mqtt_pktype_ctl						
+** º¯Êı¹¦ÄÜ: ¸ù¾İ°üÀàĞÍ½øĞĞ´¦Àí
+** Èë¿Ú²ÎÊı: uint8_t packtype:°üÀàĞÍ
+** ³ö¿Ú²ÎÊı: ÎŞ
+** ±¸    ×¢: 
+************************************************************************/
+void mqtt_pktype_ctl(uint8_t packtype,uint8_t *buf,uint32_t buflen)
+{
+	  MQTTMessage msg;
+	  int32_t rc;
+	  MQTTString receivedTopic;
+	  uint32_t len;
+		switch(packtype)
+		{
+			case PUBLISH:
+        //²ğÎöPUBLISHÏûÏ¢
+        if(MQTTDeserialize_publish(&msg.dup,(int*)&msg.qos, &msg.retained, &msg.id, &receivedTopic,
+          (unsigned char **)&msg.payload, &msg.payloadlen, buf, buflen) != 1)
+            return;	
+        //½ÓÊÜÏûÏ¢
+        deliverMessage(&receivedTopic,&msg,&mqtt_user_msg);
+        
+        //ÏûÏ¢ÖÊÁ¿²»Í¬£¬´¦Àí²»Í¬
+        if(msg.qos == QOS0)
+        {
+           //QOS0-²»ĞèÒªACK
+           //Ö±½Ó´¦ÀíÊı¾İ
+           UserMsgCtl(&mqtt_user_msg);
+           return;
+        }
+        //·¢ËÍPUBACKÏûÏ¢
+        if(msg.qos == QOS1)
+        {
+            len =MQTTSerialize_puback(buf,buflen,mqtt_user_msg.packetid);
+            if(len == 0)
+              return;
+            //·¢ËÍ·µ»Ø
+            if(transport_sendPacketBuffer(buf,len)<0)
+               return;	
+            //·µ»Øºó´¦ÀíÏûÏ¢
+            UserMsgCtl(&mqtt_user_msg); 
+            return;												
+        }
+
+        //¶ÔÓÚÖÊÁ¿2,Ö»ĞèÒª·¢ËÍPUBREC¾Í¿ÉÒÔÁË
+        if(msg.qos == QOS2)
+        {
+           len = MQTTSerialize_ack(buf, buflen, PUBREC, 0, mqtt_user_msg.packetid);			                
+           if(len == 0)
+             return;
+           //·¢ËÍ·µ»Ø
+           transport_sendPacketBuffer(buf,len);	
+        }		
+        break;
+			case  PUBREL:				           
+        //½âÎö°üÊı¾İ£¬±ØĞë°üIDÏàÍ¬²Å¿ÉÒÔ
+        rc = MQTTDeserialize_ack(&msg.type,&msg.dup, &msg.id, buf,buflen);
+        if((rc != 1)||(msg.type != PUBREL)||(msg.id != mqtt_user_msg.packetid))
+          return ;
+        //ÊÕµ½PUBREL£¬ĞèÒª´¦Àí²¢Å×ÆúÊı¾İ
+        if(mqtt_user_msg.valid == 1)
+        {
+           //·µ»Øºó´¦ÀíÏûÏ¢
+           UserMsgCtl(&mqtt_user_msg);
+        }      
+        //´®ĞĞ»¯PUBCMPÏûÏ¢
+        len = MQTTSerialize_pubcomp(buf,buflen,msg.id);	                   	
+        if(len == 0)
+          return;									
+        //·¢ËÍ·µ»Ø--PUBCOMP
+        transport_sendPacketBuffer(buf,len);										
+        break;
+			case   PUBACK://µÈ¼¶1¿Í»§¶ËÍÆËÍÊı¾İºó£¬·şÎñÆ÷·µ»Ø
+				break;
+			case   PUBREC://µÈ¼¶2¿Í»§¶ËÍÆËÍÊı¾İºó£¬·şÎñÆ÷·µ»Ø
+				break;
+			case   PUBCOMP://µÈ¼¶2¿Í»§¶ËÍÆËÍPUBRELºó£¬·şÎñÆ÷·µ»Ø
+        break;
+			default:
+				break;
+		}
+}
+
+/************************************************************************
+** º¯ÊıÃû³Æ: WaitForPacket					
+** º¯Êı¹¦ÄÜ: µÈ´ıÌØ¶¨µÄÊı¾İ°ü
+** Èë¿Ú²ÎÊı: int32_t sock:ÍøÂçÃèÊö·û
+**           uint8_t packettype:°üÀàĞÍ
+**           uint8_t times:µÈ´ı´ÎÊı
+** ³ö¿Ú²ÎÊı: >=0:µÈµ½ÁËÌØ¶¨µÄ°ü <0:Ã»ÓĞµÈµ½ÌØ¶¨µÄ°ü
+** ±¸    ×¢: 
+************************************************************************/
+int32_t WaitForPacket(int32_t sock,uint8_t packettype,uint8_t times)
+{
+	  int32_t type;
+		uint8_t buf[MSG_MAX_LEN];
+	  uint8_t n = 0;
+		int32_t buflen = sizeof(buf);
+		do
+		{
+				//¶ÁÈ¡Êı¾İ°ü
+				type = ReadPacketTimeout(sock,buf,buflen,2);
+			  if(type != -1)
+					mqtt_pktype_ctl(type,buf,buflen);
+				n++;
+		}while((type != packettype)&&(n < times));
+		//ÊÕµ½ÆÚÍûµÄ°ü
+		if(type == packettype)
+			 return 0;
+		else 
+			 return -1;		
+}
+
+void Client_Connect(void)
+{
+    char* host_ip;
+  
+#if  LWIP_DNS
+    ip4_addr_t dns_ip;
+    netconn_gethostbyname(HOST_NAME, &dns_ip);                                      //Í¨¹ıDNS»ñÈ¡ HOST Ö÷»úIPµØÖ·
+    host_ip = ip_ntoa(&dns_ip);
+    PRINT_DEBUG("host name : %s , host_ip : %s\n",HOST_NAME,host_ip);
+#else
+    host_ip = HOST_NAME;
+#endif  
+MQTT_START: 
+  
+		//´´½¨ÍøÂçÁ¬½Ó
+        PRINT_DEBUG("1.¿ªÊ¼Á¬½Ó¶ÔÓ¦µÄÔÆÆ½Ì¨·şÎñÆ÷...\n");
+        PRINT_DEBUG("·şÎñÆ÷IPµØÖ·£º%s£¬¶Ë¿ÚºÅ£º%0d£¡\n",host_ip,HOST_PORT);
+		while(1)
+		{
+				//Á¬½Ó·şÎñÆ÷
+				MQTT_Socket = transport_open((int8_t*)host_ip,HOST_PORT);
+				//Èç¹ûÁ¬½Ó·şÎñÆ÷³É¹¦
+				if(MQTT_Socket >= 0)
+				{
+						PRINT_DEBUG("Á¬½ÓÔÆÆ½Ì¨·şÎñÆ÷³É¹¦£¡\n");
+						break;
+				}
+				PRINT_DEBUG("Á¬½ÓÔÆÆ½Ì¨·şÎñÆ÷Ê§°Ü£¬µÈ´ı3ÃëÔÙ³¢ÊÔÖØĞÂÁ¬½Ó£¡\n");
+				//µÈ´ı3Ãë
+				vTaskDelay(3000);
+		}
+    
+    PRINT_DEBUG("2.MQTTÓÃ»§ÃûÓëÃÜÔ¿ÑéÖ¤µÇÂ¼...\n");
+    //MQTTÓÃ»§ÃûÓëÃÜÔ¿ÑéÖ¤µÇÂ¼
+    if(MQTT_Connect() != Connect_OK)
     {
-        mqtt_txbuf[mqtt_txlen++] = BYTE1(id);
-        mqtt_txbuf[mqtt_txlen++] = BYTE0(id);
-        id++;
+         //ÖØÁ¬·şÎñÆ÷
+         PRINT_DEBUG("MQTTÓÃ»§ÃûÓëÃÜÔ¿ÑéÖ¤µÇÂ¼Ê§°Ü...\n");
+          //¹Ø±ÕÁ´½Ó
+         transport_close();
+         goto MQTT_START;	 
     }
     
-    memcpy(&mqtt_txbuf[mqtt_txlen],message,messageLength);
-    mqtt_txlen +=messageLength;
-    *len =mqtt_txlen;
+		//¶©ÔÄÏûÏ¢
+		PRINT_DEBUG("3.¿ªÊ¼¶©ÔÄÏûÏ¢...\n");
+//    //¶©ÔÄÏûÏ¢
 
-    return mqtt_txlen;
-
-}
-/*
-å‡½æ•°åŠŸèƒ½: MQTTè®¢é˜…/å–æ¶ˆè®¢é˜…æ•°æ®æ‰“åŒ…å‡½æ•°
-å‡½æ•°å‚æ•°:
-    topic       ä¸»é¢˜   
-    qos         æ¶ˆæ¯ç­‰çº§ 0:æœ€å¤šåˆ†å‘ä¸€æ¬¡  1: è‡³å°‘åˆ†å‘ä¸€æ¬¡  2: ä»…åˆ†å‘ä¸€æ¬¡
-    whether     è®¢é˜…/å–æ¶ˆè®¢é˜…è¯·æ±‚åŒ… (1è¡¨ç¤ºè®¢é˜…,0è¡¨ç¤ºå–æ¶ˆè®¢é˜…)
-è¿”å›å€¼: 0è¡¨ç¤ºæˆåŠŸ 1è¡¨ç¤ºå¤±è´¥
-*/
-uint8_t MQTT_SubsrcibeTopic(char *topic,uint8_t qos,uint8_t whether,u8 *mqtt_txbuf,u32 *len)
-{
-    uint8_t cnt =2;
-    uint8_t wait;
-    u32 mqtt_txlen;
-    int topiclen =strlen(topic);                    //å¯å˜æŠ¥å¤´çš„é•¿åº¦ï¼ˆ2å­—èŠ‚ï¼‰åŠ ä¸Šæœ‰æ•ˆè½½è·çš„é•¿åº¦
-    int Datalen =0;
-    uint8_t encodedByte =0;
-    mqtt_txlen =0;
-    Datalen =2+(topiclen+2)+(whether?1:0);
-
-//æ§åˆ¶æŠ¥æ–‡
-//å›ºå®šæŠ¥å¤´
-if(whether)
-{
-    mqtt_txbuf[mqtt_txlen++]=0x82;                  //æ¶ˆæ¯ç±»å‹å’Œæ ‡å¿—è®¢é˜…
-}else
-{
-    mqtt_txbuf[mqtt_txlen++]=0xA2;                  //å–æ¶ˆè®¢é˜…
-}
-//å‰©ä½™é•¿åº¦
-do{
-    encodedByte =Datalen % 128;
-    Datalen =Datalen/128;
-    if(Datalen >0)
+    if(MQTTSubscribe(MQTT_Socket,(char *)TOPIC,QOS1) < 0)
     {
-        encodedByte |=0x80;
-    }
-    mqtt_txbuf[mqtt_txlen++]=encodedByte;
-}while(Datalen >0);
+         //ÖØÁ¬·şÎñÆ÷
+         PRINT_DEBUG("¿Í»§¶Ë¶©ÔÄÏûÏ¢Ê§°Ü...\n");
+          //¹Ø±ÕÁ´½Ó
+         transport_close();
+         goto MQTT_START;	   
+    }	
+		//ÎŞÏŞÑ­»·
+		PRINT_DEBUG("4.¿ªÊ¼Ñ­»·½ÓÊÕ¶©ÔÄµÄÏûÏ¢...\n");
 
-//æŠ¥æ–‡æ ‡è¯†ç¬¦
-mqtt_txbuf[mqtt_txlen++]=0x00;                          //MSB
-mqtt_txbuf[mqtt_txlen++]=0x01;                          //LSB
-
-mqtt_txbuf[mqtt_txlen++]=BYTE1(topiclen);
-mqtt_txbuf[mqtt_txlen++]=BYTE0(topiclen);
-memcpy(&mqtt_txbuf[mqtt_txlen],topic,topiclen);
-mqtt_txlen +=topiclen;
-
-if(whether)
+}
+/************************************************************************
+** º¯ÊıÃû³Æ: mqtt_thread								
+** º¯Êı¹¦ÄÜ: MQTTÈÎÎñ
+** Èë¿Ú²ÎÊı: void *pvParameters£ºÈÎÎñ²ÎÊı
+** ³ö¿Ú²ÎÊı: ÎŞ
+** ±¸    ×¢: MQTTÁ¬ÔÆ²½Öè£º
+**           1.Á¬½Ó¶ÔÓ¦ÔÆÆ½Ì¨µÄ·şÎñÆ÷
+**           2.MQTTÓÃ»§ÓëÃÜÔ¿ÑéÖ¤µÇÂ¼
+**           3.¶©ÔÄÖ¸¶¨Ö÷Ìâ
+**           4.µÈ´ı½ÓÊÕÖ÷ÌâµÄÊı¾İÓëÉÏ±¨Ö÷ÌâÊı¾İ
+************************************************************************/
+static void Sky_mqtt_recv_thread(void *arg)
 {
-    mqtt_txbuf[mqtt_txlen++]=qos;
+    uint32_t curtick;
+	uint8_t no_mqtt_msg_exchange = 1;
+	uint8_t buf[MSG_MAX_LEN];
+	int32_t buflen = sizeof(buf);
+    int32_t type;
+    fd_set readfd;
+	struct timeval tv;      //µÈ´ıÊ±¼ä
+	tv.tv_sec = 0;
+	tv.tv_usec = 10;
+
+  
+MQTT_START: 
+    //¿ªÊ¼Á¬½Ó
+    Client_Connect();
+    //»ñÈ¡µ±Ç°µÎ´ğ£¬×÷ÎªĞÄÌø°üÆğÊ¼Ê±¼ä
+		curtick = xTaskGetTickCount();
+		while(1)
+		{
+				//±íÃ÷ÎŞÊı¾İ½»»»
+				no_mqtt_msg_exchange = 1;
+			
+				//ÍÆËÍÏûÏ¢
+				FD_ZERO(&readfd);
+				FD_SET(MQTT_Socket,&readfd);						  
+
+				//µÈ´ı¿É¶ÁÊÂ¼ş
+				select(MQTT_Socket+1,&readfd,NULL,NULL,&tv);
+				
+				//ÅĞ¶ÏMQTT·şÎñÆ÷ÊÇ·ñÓĞÊı¾İ
+				if(FD_ISSET(MQTT_Socket,&readfd) != 0)
+				{
+						//¶ÁÈ¡Êı¾İ°ü--×¢ÒâÕâÀï²ÎÊıÎª0£¬²»×èÈû
+						type = ReadPacketTimeout(MQTT_Socket,buf,buflen,50);
+						if(type != -1)
+						{
+								mqtt_pktype_ctl(type,buf,buflen);
+								//±íÃ÷ÓĞÊı¾İ½»»»
+								no_mqtt_msg_exchange = 0;
+								//»ñÈ¡µ±Ç°µÎ´ğ£¬×÷ÎªĞÄÌø°üÆğÊ¼Ê±¼ä
+								curtick = xTaskGetTickCount();
+						}
+				}
+        
+        //ÕâÀïÖ÷ÒªÄ¿µÄÊÇ¶¨Ê±Ïò·şÎñÆ÷·¢ËÍPING±£»îÃüÁî
+        if((xTaskGetTickCount() - curtick) >(KEEPLIVE_TIME/2*1000))
+        {
+            curtick = xTaskGetTickCount();
+            //ÅĞ¶ÏÊÇ·ñÓĞÊı¾İ½»»»
+            if(no_mqtt_msg_exchange == 0)
+            {
+               //Èç¹ûÓĞÊı¾İ½»»»£¬Õâ´Î¾Í²»ĞèÒª·¢ËÍPINGÏûÏ¢
+               continue;
+            }
+            
+            if(MQTT_PingReq(MQTT_Socket) < 0)
+            {
+               //ÖØÁ¬·şÎñÆ÷
+               PRINT_DEBUG("·¢ËÍ±£³Ö»îĞÔpingÊ§°Ü....\n");
+               goto CLOSE;	 
+            }
+            
+            //ĞÄÌø³É¹¦
+            PRINT_DEBUG("·¢ËÍ±£³Ö»îĞÔping×÷ÎªĞÄÌø³É¹¦....\n");
+            //±íÃ÷ÓĞÊı¾İ½»»»
+            no_mqtt_msg_exchange = 0;
+        }   
+		}
+
+CLOSE:
+	 //¹Ø±ÕÁ´½Ó
+	 transport_close();
+	 //ÖØĞÂÁ´½Ó·şÎñÆ÷
+	 goto MQTT_START;
+    
 }
 
-*len =mqtt_txlen;
-return 0;
+void Sky_mqtt_thread_init(void)
+{
+    BaseType_t err;
+    taskENTER_CRITICAL();
+    err =xTaskCreate(Sky_mqtt_recv_thread,"SKT MQTT RECV",2048,NULL,8,Sky_MqttRecv_Handler);
+//    err =xTaskCreate(Sky_mqtt_send_thread,"SKY MQTT SEND",2048,NULL,7,Sky_MqttSend_Handler);
+    taskEXIT_CRITICAL();
+//    printf("mqtt err=%d",(int)err);
+                     
 }

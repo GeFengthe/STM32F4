@@ -56,3 +56,7 @@ stm32f429\key.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\key.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\key.o: ..\FreeRTOS\include\task.h
 stm32f429\key.o: ..\FreeRTOS\include\list.h
+stm32f429\key.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
+stm32f429\key.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
+stm32f429\key.o: ..\BSP\Inc\sys.h
+stm32f429\key.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h

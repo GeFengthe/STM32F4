@@ -1,0 +1,11 @@
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTFormat.c
+stm32f429\mqttformat.o: ..\MQTTPacket\src\StackTrace.h
+stm32f429\mqttformat.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTPacket.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTConnect.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTPublish.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTSubscribe.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTUnsubscribe.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTFormat.h
+stm32f429\mqttformat.o: ..\MQTTPacket\src\MQTTPacket.h
+stm32f429\mqttformat.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

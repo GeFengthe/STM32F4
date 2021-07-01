@@ -72,6 +72,7 @@ stm32f429\ethernetif.o: ../Core/Inc/main.h
 stm32f429\ethernetif.o: ..\BSP\Inc\delay.h
 stm32f429\ethernetif.o: ../Core/Inc/main.h
 stm32f429\ethernetif.o: ..\BSP\Inc\key.h
+stm32f429\ethernetif.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\ethernetif.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\ethernetif.o: ..\LWIP\lwip-1.4.1\src\include\netif/etharp.h
 stm32f429\ethernetif.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/ip.h

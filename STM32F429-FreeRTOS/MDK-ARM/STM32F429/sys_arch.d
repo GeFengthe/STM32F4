@@ -70,3 +70,7 @@ stm32f429\sys_arch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_wwdg.h
 stm32f429\sys_arch.o: ..\BSP\Inc\delay.h
 stm32f429\sys_arch.o: ..\BSP\Inc\key.h
 stm32f429\sys_arch.o: ../Core/Inc/main.h
+stm32f429\sys_arch.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
+stm32f429\sys_arch.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
+stm32f429\sys_arch.o: ..\BSP\Inc\sys.h
+stm32f429\sys_arch.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h

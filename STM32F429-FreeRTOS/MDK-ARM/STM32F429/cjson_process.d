@@ -1,0 +1,13 @@
+stm32f429\cjson_process.o: ..\APP\src\cJSON_Process.c
+stm32f429\cjson_process.o: ..\APP\Inc\cJSON_Process.h
+stm32f429\cjson_process.o: ..\APP\Inc\cJSON.h
+stm32f429\cjson_process.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+stm32f429\cjson_process.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\FreeRTOS.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\FreeRTOSConfig.h
+stm32f429\cjson_process.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\projdefs.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\portable.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\deprecated_definitions.h
+stm32f429\cjson_process.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
+stm32f429\cjson_process.o: ..\FreeRTOS\include\mpu_wrappers.h

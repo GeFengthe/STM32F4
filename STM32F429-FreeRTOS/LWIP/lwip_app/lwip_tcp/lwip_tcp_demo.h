@@ -17,3 +17,4 @@ extern uint8_t tcp_client_flag;
 extern void Sky_TcpClientThread_Init(void);
 extern void lwip_tcpClient_send(u8 * sendbuf,u32 length);
 #endif
+

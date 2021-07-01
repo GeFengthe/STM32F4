@@ -56,9 +56,9 @@ stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\include\task.h
 stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\include\list.h
+stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\lwip_tcp_demo.o: ..\BSP\Inc\sys.h
-stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip-1.4.1\src\include\lwip/api.h
 stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip-1.4.1\src\include\lwip/opt.h
 stm32f429\lwip_tcp_demo.o: ..\LWIP\lwip_app\lwip_comm\lwipopts.h
@@ -78,3 +78,4 @@ stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\include\queue.h
 stm32f429\lwip_tcp_demo.o: ..\FreeRTOS\include\semphr.h
 stm32f429\lwip_tcp_demo.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 stm32f429\lwip_tcp_demo.o: ..\APP\Inc\mqtt.h
+stm32f429\lwip_tcp_demo.o: ..\APP\Inc\cJSON.h

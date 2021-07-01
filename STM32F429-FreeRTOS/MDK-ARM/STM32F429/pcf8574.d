@@ -59,3 +59,6 @@ stm32f429\pcf8574.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\pcf8574.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\pcf8574.o: ..\FreeRTOS\include\task.h
 stm32f429\pcf8574.o: ..\FreeRTOS\include\list.h
+stm32f429\pcf8574.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
+stm32f429\pcf8574.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
+stm32f429\pcf8574.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h

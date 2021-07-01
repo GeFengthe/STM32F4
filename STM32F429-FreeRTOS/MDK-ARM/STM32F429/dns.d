@@ -18,15 +18,3 @@ stm32f429\dns.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\dns.o: ..\FreeRTOS\include\task.h
 stm32f429\dns.o: ..\FreeRTOS\include\list.h
 stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/opt.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/udp.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/pbuf.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/err.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/netif.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/ip_addr.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/def.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\ipv4\lwip/ip.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/mem.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/memp_std.h
-stm32f429\dns.o: ..\LWIP\lwip-1.4.1\src\include\lwip/dns.h
-stm32f429\dns.o: E:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

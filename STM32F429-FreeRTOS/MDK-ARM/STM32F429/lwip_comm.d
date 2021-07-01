@@ -58,6 +58,7 @@ stm32f429\lwip_comm.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\lwip_comm.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\lwip_comm.o: ..\FreeRTOS\include\task.h
 stm32f429\lwip_comm.o: ..\FreeRTOS\include\list.h
+stm32f429\lwip_comm.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\lwip_comm.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\lwip_comm.o: ..\LWIP\lwip-1.4.1\src\include\netif/etharp.h
 stm32f429\lwip_comm.o: ..\LWIP\lwip-1.4.1\src\include\lwip/opt.h

@@ -93,6 +93,8 @@
 //断言
 #define vAssertCalled(char,int) printf("Error:%s,%d\r\n",char,int)
 #define configASSERT(x) if((x)==0)  vAssertCalled(__FILE__,__LINE__)
+  
+
 
 /***************************************************************************************************************/
 /*                                        FreeRTOS基础配置配置选项                                              */
@@ -132,7 +134,7 @@
 #define configAPPLICATION_ALLOCATED_HEAP        0                                   //使用自定义SRAM的内存
 #define configSUPPORT_DYNAMUC_ALLOCATION        1                                   //支持动态内存申请
 #define configSUPPORT_STATIC_ALLOCATION         0                                   //是否支持静态内存申请
-#define configTOTAL_HEAP_SIZE			        ( ( size_t ) ( 55* 1024 ) )        //系统所有总的堆大小 75K      实际使用的总是比设置的小5K 未找到原因
+#define configTOTAL_HEAP_SIZE			        ( ( size_t ) ( 75* 1024 ) )        //系统所有总的堆大小 75K      实际使用的总是比设置的小5K 未找到原因
 
 
 /***************************************************************************************************************/
@@ -145,7 +147,7 @@
 /*                                FreeRTOS与运行时间和任务状态收集有关的配置选项                                 */
 /***************************************************************************************************************/
 #define configGENERATE_RUN_TIME_STATS	        0                                   //为1时启用运行时间统计功能
-#define configUSE_TRACE_FACILITY		        0                                   //为1启用可视化跟踪调试
+#define configUSE_TRACE_FACILITY		        1                                   //为1启用可视化跟踪调试
 #define configUSE_STATS_FORMATTING_FUNCTIONS    1                                   //与宏configUSE_TRACE_FACILITY同时为1时会编译下面3个函数
                                                                                     //prvWriteNameToBuffer(),vTaskList(),
                                                                                     

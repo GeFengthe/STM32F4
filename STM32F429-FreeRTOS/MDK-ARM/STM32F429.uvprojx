@@ -54,11 +54,11 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
-          <CreateBatchFile>0</CreateBatchFile>
+          <CreateBatchFile>1</CreateBatchFile>
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\Inc;..\APP\Inc;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\LWIP\arch;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\netif;..\LWIP\lwip_app\lwip_comm;..\LWIP;..\LWIP\lwip_app\lwip_udp;..\LWIP\lwip_app\lwip_tcp;..\APP\inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\BSP\Inc;..\APP\Inc;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\LWIP\arch;..\LWIP\lwip-1.4.1\src\include;..\LWIP\lwip-1.4.1\src\include\ipv4;..\LWIP\lwip-1.4.1\src\netif;..\LWIP\lwip_app\lwip_comm;..\LWIP;..\LWIP\lwip_app\lwip_udp;..\LWIP\lwip_app\lwip_tcp;..\APP\inc;..\LWIP\lwip_app\lwip_socket;..\LWIP\lwip_app\lwip_http;..\MQTTPacket\src;..\MQTTPacket\port</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -691,6 +691,16 @@
               <FileType>1</FileType>
               <FilePath>..\APP\src\mqtt.c</FilePath>
             </File>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\src\cJSON.c</FilePath>
+            </File>
+            <File>
+              <FileName>cJSON_Process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\src\cJSON_Process.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -707,9 +717,14 @@
               <FilePath>..\LWIP\lwip_app\lwip_udp\udp_demo.c</FilePath>
             </File>
             <File>
-              <FileName>lwip_tcp_demo.c</FileName>
+              <FileName>socket.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.c</FilePath>
+              <FilePath>..\LWIP\lwip_app\lwip_socket\socket.c</FilePath>
+            </File>
+            <File>
+              <FileName>httpserver_netconn.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LWIP\lwip_app\lwip_http\httpserver_netconn.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -925,6 +940,66 @@
               <FileName>tcpip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\LWIP\lwip-1.4.1\src\api\tcpip.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MQTT</GroupName>
+          <Files>
+            <File>
+              <FileName>MQTTConnectClient.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTConnectClient.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTConnectServer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTConnectServer.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTDeserializePublish.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTDeserializePublish.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTFormat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTFormat.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTPacket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTPacket.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTSerializePublish.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTSerializePublish.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTSubscribeClient.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTSubscribeClient.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTSubscribeServer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTSubscribeServer.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTUnsubscribeClient.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTUnsubscribeClient.c</FilePath>
+            </File>
+            <File>
+              <FileName>MQTTUnsubscribeServer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\src\MQTTUnsubscribeServer.c</FilePath>
+            </File>
+            <File>
+              <FileName>transport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MQTTPacket\port\transport.c</FilePath>
             </File>
           </Files>
         </Group>

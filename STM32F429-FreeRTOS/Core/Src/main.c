@@ -12,6 +12,10 @@
 #include "queue.h"
 #include "Semphr.h"
 #include "timers.h"
+#include "socket.h"
+#include "httpserver_netconn.h"
+#include "mqtt.h"
+
 void SystemClock_Config(void);                //时钟配置函数 180M
 static void MX_GPIO_Init(void);
 
@@ -91,25 +95,28 @@ void Sky_StartThread(void *parameters)
         printf("LWIP init fail\r\n");
     }
     printf("LWIP init Success\r\n");
+    Sky_mqtt_thread_init();
+//    client_init();
 
-    Sky_TcpClientThread_Init();                                                              //创建TCP客户端线程
+//    Sky_TcpClientThread_Init();                                                              //创建TCP客户端线程
+//    Sky_http_server_thread_init();
 #if LWIP_DHCP
     lwip_comm_dhcp_creat();
 #endif
 
 
     
-    Sky_MqttHeartTimer=xTimerCreate("mqtt heart",SKY_MQTTTIMERHEART_PERIOD,pdTRUE,0,Sky_TimerCallback);                //创建心跳定时器 56ms
+//    Sky_MqttHeartTimer=xTimerCreate("mqtt heart",SKY_MQTTTIMERHEART_PERIOD,pdTRUE,0,Sky_TimerCallback);                //创建心跳定时器 56ms
     
-    xTaskCreate((TaskFunction_t )Sky_AppThread,
-                (const char *   )"apptask",
-                (uint16_t       )SKY_APPTASK_SIZE,
-                (void *)         NULL,
-                (UBaseType_t    )SKY_APPTASK_PPRIO,
-                (TaskHandle_t * )&SkyAppTask_Handler);
-                
-                
-    xTimerStart(Sky_MqttHeartTimer,0);                                                          //开启心跳定时器
+//    xTaskCreate((TaskFunction_t )Sky_AppThread,
+//                (const char *   )"apptask",
+//                (uint16_t       )SKY_APPTASK_SIZE,
+//                (void *)         NULL,
+//                (UBaseType_t    )SKY_APPTASK_PPRIO,
+//                (TaskHandle_t * )&SkyAppTask_Handler);
+//                
+//                
+//    xTimerStart(Sky_MqttHeartTimer,0);                                                          //开启心跳定时器
                 
     vTaskDelete(SkyStartTask_Handler);                                                          //删除开始线程
                 
@@ -126,7 +133,7 @@ void Sky_StartThread(void *parameters)
 void Sky_AppThread(void *parameters)
 {
 
-    uint8_t *buffer;
+    //uint8_t *buffer;
     uint8_t key=0;
     
     while(1)
@@ -138,24 +145,11 @@ void Sky_AppThread(void *parameters)
                 LEDRTOGG;
                 break;
         }
-        printf(" SKY_APP THRAD IS running\r\n");
+//        printf(" SKY_APP THRAD IS running\r\n");
         vTaskDelay(100);
     }
     
 }
-/**
-*@beif  Sky_TimerCallback
-*/
-void Sky_TimerCallback(void *para)
-{
-    if(mqtt_alive ==1)
-    {
-        LEDG(1);
-        mqtt_sendheart();
-    }
-    printf("MQTT Heart TIMER is running\r\n");
-}
-
 
 /**
   * @brief System Clock Configuration

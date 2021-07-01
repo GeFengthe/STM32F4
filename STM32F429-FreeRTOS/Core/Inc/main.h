@@ -33,6 +33,8 @@ extern "C" {
 #include "key.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "lwip_tcp_demo.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */

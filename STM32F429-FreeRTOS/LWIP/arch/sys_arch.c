@@ -267,14 +267,16 @@ TaskHandle_t LWIP_ThreadHandler;
 //prio:进程任务的优先级
 sys_thread_t sys_thread_new(const char *name, lwip_thread_fn thread, void *arg, int stacksize, int prio)
 {
+    BaseType_t err;
 	taskENTER_CRITICAL();
-    xTaskCreate((TaskFunction_t) thread,
+    err=xTaskCreate((TaskFunction_t) thread,
                 (const char *) name,
                 (uint16_t)stacksize,
                 (void *)NULL,
                 (UBaseType_t)prio,
                 (TaskHandle_t *)&LWIP_ThreadHandler);
     taskEXIT_CRITICAL();
+    printf("%s,%d",name,(int)err);
     return 0;
 } 
 //lwip延时函数

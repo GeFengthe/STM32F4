@@ -3,6 +3,7 @@
 #include "string.h"
 #include "mqtt.h"
 #include "delay.h"
+#include "cJSON.h"
 
 #define MQTT_CONNECT_ACK                4
 #define MQTT_DISCONNECT_ACK             2
@@ -78,6 +79,8 @@ void lwip_tcpClient_send(u8 * sendbuf,u32 length)
 */
 static void mqtt_MessageProcess(u8 *mag,u32 length)
 {
+    cJSON *test;
+    
     if(length ==MQTT_CONNECT_ACK)
     {
         if(mag[0] ==parket_connetAck[0]&& mag[1] ==parket_connetAck[1]&&mag[2] ==parket_connetAck[3])
@@ -98,6 +101,15 @@ static void mqtt_MessageProcess(u8 *mag,u32 length)
             subtopic_flag =1;                                                                           //主题订阅成功标志
             printf("MQTT 订阅成功\r\n");
         }
+    }else if(length >10)                                                                              //云端发送过来的数据前面是有类型
+    {
+        test =cJSON_Parse((char *)mag+56);
+        cJSON *test2=cJSON_GetObjectItem(test,"params")->child;
+//        printf("Switch=%d\r\n",cJSON_GetObjectItem(test2,"PowerSwitch")->valueint);
+        printf("%s\r\n",cJSON_GetObjectItem(test,"params")->valuestring);
+        
+        cJSON_Delete(test2);
+        cJSON_Delete(test);
     }
 }
 /***
@@ -145,7 +157,7 @@ static void Sky_TcpClientThread(void *arg)
         printf("连接上服务器%d.%d.%d.%d,本地端口号为:%d\r\n",lwipdev.remoteip[0],lwipdev.remoteip[1],lwipdev.remoteip[2],lwipdev.remoteip[3],loca_port);
         tcp_client_sendbuf =pvPortMalloc(200);
         
-        MQTT_Connect_Pack(tcp_client_sendbuf,&tcp_sendlen);
+//        MQTT_Connect_Pack(tcp_client_sendbuf,&tcp_sendlen);
         printf("tcp_len =%d\r\n",tcp_sendlen);
         lwip_tcpClient_send(tcp_client_sendbuf,tcp_sendlen);
         
@@ -179,13 +191,12 @@ static void Sky_TcpClientThread(void *arg)
                             break;
                         }
                 }
-                mqtt_MessageProcess(tcp_client_recvbuf,data_len);
-                for(u8 i=0;i<data_len;i++)
-                {
-                    printf("0x%x    \r\n",tcp_client_recvbuf[i]);
-                }
-                data_len =0;
+                
                 taskEXIT_CRITICAL();
+                printf("length=%d\r\n",data_len);
+                mqtt_MessageProcess(tcp_client_recvbuf,data_len);
+
+                data_len =0;
                 netbuf_delete(recvbuf);
              }else if(recv_err ==ERR_CLSD)
              {
@@ -195,7 +206,7 @@ static void Sky_TcpClientThread(void *arg)
                  break;
              }else if(recv_err ==ERR_TIMEOUT)
              {
-                 printf(" tcp task TIMEOUT\r\n");
+//                 printf(" tcp task TIMEOUT\r\n");
              }
                 vTaskDelay(10);
          }

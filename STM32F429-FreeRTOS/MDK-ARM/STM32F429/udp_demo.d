@@ -56,10 +56,10 @@ stm32f429\udp_demo.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 stm32f429\udp_demo.o: ..\FreeRTOS\include\mpu_wrappers.h
 stm32f429\udp_demo.o: ..\FreeRTOS\include\task.h
 stm32f429\udp_demo.o: ..\FreeRTOS\include\list.h
+stm32f429\udp_demo.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\udp_demo.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\udp_demo.o: ..\BSP\Inc\sys.h
 stm32f429\udp_demo.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
-stm32f429\udp_demo.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\udp_demo.o: ..\LWIP\lwip-1.4.1\src\include\lwip/api.h
 stm32f429\udp_demo.o: ..\LWIP\lwip-1.4.1\src\include\lwip/opt.h
 stm32f429\udp_demo.o: ..\LWIP\lwip_app\lwip_comm\lwipopts.h
