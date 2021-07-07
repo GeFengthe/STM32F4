@@ -4,6 +4,7 @@
 #include "MQTTPacket.h"
 #include "lwip/sockets.h"
 #include "cJSON_Process.h"
+#include "lcd.h"
 TaskHandle_t Sky_MqttRecv_Handler;
 //TaskHandle_t Sky_MqttSend_Handler;
 
@@ -192,7 +193,7 @@ void UserMsgCtl(MQTT_USER_MSG  *msg)
       PRINT_DEBUG("MQTT>>消息主题：%s\n",msg->topic);	
       PRINT_DEBUG("MQTT>>消息类容：%s\n",msg->msg);	
       PRINT_DEBUG("MQTT>>消息长度：%d\n",msg->msglenth);	 
-
+      //在自定义下 拆开MQTT 的协议层，只剩有效数据部分
       Proscess(msg->msg);
     }
 	  //处理完后销毁数据
@@ -540,6 +541,8 @@ static void Sky_mqtt_recv_thread(void *arg)
     int32_t type;
     fd_set readfd;
 	struct timeval tv;      //等待时间
+    static uint32_t cnt=0;          //
+    char *pdata;
 	tv.tv_sec = 0;
 	tv.tv_usec = 10;
 
@@ -593,7 +596,9 @@ MQTT_START:
                PRINT_DEBUG("发送保持活性ping失败....\n");
                goto CLOSE;	 
             }
-            
+            cnt++;
+            sprintf(pdata,"ping cnt %d",cnt);
+            LCD_ShowString(0,0,240,100,32,(u8 *)pdata);
             //心跳成功
             PRINT_DEBUG("发送保持活性ping作为心跳成功....\n");
             //表明有数据交换

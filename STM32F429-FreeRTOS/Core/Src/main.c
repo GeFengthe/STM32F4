@@ -1,5 +1,6 @@
 #include "main.h"
 #include "led.h"
+#include "lcd.h"
 #include "uart.h"
 #include "stdio.h"
 #include "delay.h"
@@ -30,6 +31,8 @@ static void MX_GPIO_Init(void);
 
 #define SKY_MQTTTIMERHEART_PERIOD      1000*56              //56s
 
+
+const char *name="STM32F4 TFTLCD";
 //任务句柄
 TaskHandle_t    SkyStartTask_Handler;
 TaskHandle_t    SkyAppTask_Handler;
@@ -79,6 +82,7 @@ void Sky_BoardInit(void)
     led_init();
     uart1_init();
     PCF8574_Init();
+    LCD_Init();
 }
 
 /***
@@ -90,6 +94,7 @@ void Sky_BoardInit(void)
 */
 void Sky_StartThread(void *parameters)
 {
+    LCD_ShowString(0,0,240,100,32,(u8 *)name);
     while(lwip_comm_init())                                                         //初始化LWIP协议
     {
         printf("LWIP init fail\r\n");
@@ -173,8 +178,8 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 25;
   RCC_OscInitStruct.PLL.PLLN = 360;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLP = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 8;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

@@ -109,4 +109,4 @@
 --library_type=microlib --strict --scatter "STM32F429\STM32F429.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
---list "STM32F429.map" -o STM32F429\STM32F429.axf
+--list "..\..\..\..\STML4-HAL\STM32-HAL-FreeRTOS\Project\STM32F429.map" -o STM32F429\STM32F429.axf

@@ -23,7 +23,7 @@
 
 #define   PRINT_DEBUG   printf
 
-#define   TOPIC         "/a1delcKh1To/STM32-light/user/lighton_off"
+#define   TOPIC         "/sys/a1delcKh1To/STM32-light/thing/service/property/set"
 
 enum QoS 
 { QOS0 = 0, 

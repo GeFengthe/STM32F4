@@ -1,4 +1,7 @@
 SET PATH=E:\Keil_v5\ARM\ARMCC\Bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;E:\Program Files\TortoiseGit\bin;E:\Program Files\Git\cmd;E:\MinGW\bin;;E:\Program Files\IDM Computer Solutions\UltraEdit;C:\Program Files\Common Files\Autodesk Shared\;F:\Users\sky\AppData\Local\Programs\Python\Python39\Scripts\;F:\Users\sky\AppData\Local\Programs\Python\Python39\;C:\Users\sky\AppData\Local\Microsoft\WindowsApps;C:\Users\sky\AppData\Local\GitHubDesktop\bin;E:\Users\sky\AppData\Local\Programs\Microsoft VS Code\bin
+SET ARMCC5_ASMOPT=--diag_suppress=9931
+SET ARMCC5_CCOPT=--diag_suppress=9931
+SET ARMCC5_LINKOPT=--diag_suppress=9931
 SET CPU_TYPE=STM32F429IGTx
 SET CPU_VENDOR=STMicroelectronics
 SET UV2_TARGET=STM32F429

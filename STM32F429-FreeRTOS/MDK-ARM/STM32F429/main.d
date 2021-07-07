@@ -31,11 +31,16 @@ stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_sram.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_fmc.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_nor.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_nand.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_sdram.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_iwdg.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h
+stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 stm32f429\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
@@ -60,6 +65,7 @@ stm32f429\main.o: ..\LWIP\lwip_app\lwip_comm\lwip_comm.h
 stm32f429\main.o: ..\BSP\Inc\sys.h
 stm32f429\main.o: ..\LWIP\lwip_app\lwip_tcp\lwip_tcp_demo.h
 stm32f429\main.o: ..\BSP\Inc\led.h
+stm32f429\main.o: ..\BSP\Inc\lcd.h
 stm32f429\main.o: ..\BSP\Inc\uart.h
 stm32f429\main.o: ..\BSP\Inc\lan8720.h
 stm32f429\main.o: ..\BSP\Inc\pcf8574.h

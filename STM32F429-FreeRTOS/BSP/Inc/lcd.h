@@ -3,11 +3,42 @@
 #include "stm32f4xx.h"
 #include "main.h"
 
+//画笔颜色
+#define WHITE         	 0xFFFF
+#define BLACK         	 0x0000	  
+#define BLUE         	 0x001F  
+#define BRED             0XF81F
+#define GRED 			 0XFFE0
+#define GBLUE			 0X07FF
+#define RED           	 0xF800
+#define MAGENTA       	 0xF81F
+#define GREEN         	 0x07E0
+#define CYAN          	 0x7FFF
+#define YELLOW        	 0xFFE0
+#define BROWN 			 0XBC40 //棕色
+#define BRRED 			 0XFC07 //棕红色
+#define GRAY  			 0X8430 //灰色
+//GUI颜色
+
+#define DARKBLUE      	 0X01CF	//深蓝色
+#define LIGHTBLUE      	 0X7D7C	//浅蓝色  
+#define GRAYBLUE       	 0X5458 //灰蓝色
+//以上三色为PANEL的颜色 
+ 
+#define LIGHTGREEN     	 0X841F //浅绿色
+//#define LIGHTGRAY        0XEF5B //浅灰色(PANNEL)
+#define LGRAY 			 0XC618 //浅灰色(PANNEL),窗体背景色
+
+#define LGRAYBLUE        0XA651 //浅灰蓝色(中间层颜色)
+#define LBBLUE           0X2B12 //浅棕蓝色(选择条目的反色)
+
+
 //*--------------------LCD 相关指令---------------------
-#define     LCD_READID                          0x3D            //读控制ID
+#define     LCD_READID                          0xD3            //读控制ID
 #define     LCD_WCOLUMNADDR                     0x2A            //写入列地址
-#define     LCD_WPAGEADDR                        0x2B            //写入页地址
-#define     LCD_WGRAMADDR                        0x2C            //写入GRAM地址
+#define     LCD_WPAGEADDR                       0x2B            //写入页地址
+#define     LCD_WGRAMADDR                       0x2C            //写入GRAM地址
+#define     LCD_MADCLADDR                       0x36            //存储器访问指令，控制屏幕像素刷新方式
 //------------------------------------------------------
 //LCD重要参数集
 typedef struct  
@@ -24,7 +55,7 @@ typedef struct
 extern sky_lcd skylcd;              //管理LCD重要参数
 //////////////////////////////////////////////////////////////////////////////////	 
 //-----------------MCU屏 LCD端口定义---------------- 
-#define	LCD_LED PBout(5) 	//LCD背光	PB5	    
+#define	LCD_LED(n)          n?HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_SET):HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_RESET);             	//LCD背光	PB5	    
 //LCD地址结构体
 typedef struct
 {
@@ -56,4 +87,6 @@ typedef enum{
 #define DEFAULT_SCAN_DIR            L2R_U2D             //默认扫描方向
 
 
+extern void LCD_Init(void);
+extern void LCD_ShowString(u16 x,u16 y,u16 width,u16 height,u8 size,u8 *p);
 #endif
